@@ -22,7 +22,7 @@ phases:
           export PATH=$JAVA_HOME/bin:$PATH;
           echo "Java installed from manual download";
         }
-      - export JAVA_HOME=${JAVA_HOME:-/usr/lib/jvm/java-11-openjdk};  # Adjust for the Java version you install
+      - export JAVA_HOME=${JAVA_HOME:-/usr/lib/jvm/java-11-openjdk}
       - export PATH=$JAVA_HOME/bin:$PATH
       - echo "JAVA_HOME set to $JAVA_HOME"
       - java -version
