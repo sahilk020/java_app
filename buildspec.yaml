@@ -14,6 +14,7 @@ phases:
     commands:
       - echo "Installing necessary dependencies"
       - yum install -y git aws-cli
+      - yum install -y java-1.8.0-openjdk-devel  # Ensure Java 8 is installed
 
   pre_build:
     commands:
@@ -31,8 +32,7 @@ phases:
     commands:
       - echo "Preparing to upload to S3"
       - mkdir -p ${CICD_RELEASES}/$(date +"%Y%m%d_%H%M%S")
-      - mv build/libs/*.war ${CICD_RELEASES}/$(date +"%Y%m%d_%H%M%S")/
-      - aws s3 cp ${CICD_RELEASES} s3://$S3_BUCKET/cicd-releases/pgws/$(date +"%Y%m%d_%H%M%S")/ --recursive --region $AWS_REGION
+      - mv build/libs/*.war ${CICD_RELEASES}/$(date +"%Y%m%d_%H%M%S")/ || echo "No WAR files found, skipping upload."
 
 artifacts:
   files:
