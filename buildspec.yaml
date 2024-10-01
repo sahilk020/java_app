@@ -22,9 +22,9 @@ phases:
           export PATH=$JAVA_HOME/bin:$PATH;
           echo "Java installed from manual download";
         }
-      - echo "Setting JAVA_HOME and PATH"
       - export JAVA_HOME=${JAVA_HOME:-/usr/lib/jvm/java-11-openjdk};  # Adjust for the Java version you install
       - export PATH=$JAVA_HOME/bin:$PATH
+      - echo "JAVA_HOME set to $JAVA_HOME"
       - java -version
 
   pre_build:
@@ -37,7 +37,7 @@ phases:
       - echo "Building the project"
       - cd /opt/code/$COMPONENT_DIR
       - chmod +x gradlew
-      - ./gradlew $BUILD_COMMAND
+      - ./gradlew $BUILD_COMMAND || { echo "Build failed. Checking for Java issues..."; echo "JAVA_HOME: $JAVA_HOME"; java -version; exit 1; }
 
   post_build:
     commands:
