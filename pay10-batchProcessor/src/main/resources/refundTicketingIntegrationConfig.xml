@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:int="http://www.springframework.org/schema/integration"
+	xmlns:int-file="http://www.springframework.org/schema/integration/file"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:batch="http://www.springframework.org/schema/batch"
+	
+	xsi:schemaLocation="http://www.springframework.org/schema/integration 
+	http://www.springframework.org/schema/integration/spring-integration.xsd
+		http://www.springframework.org/schema/integration/file 
+		http://www.springframework.org/schema/integration/file/spring-integration-file.xsd
+		http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context 
+		http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/batch 
+		http://www.springframework.org/schema/batch/spring-batch.xsd
+		">
+		
+	<int:channel id="refundTicketingFiles"/>
+	<int:channel id="refundTicketingRequests"/>
+	
+	<int-file:inbound-channel-adapter id="refundTicketingFilePoller" channel="refundTicketingFiles" prevent-duplicates="false" watch-events="CREATE,MODIFY"
+	    use-watch-service="true" directory="${directory.path.refundRead}" filename-regex="${refundTicketing.file.nameExpression:*.txt}">
+	  <int:poller fixed-delay="${poller.delay:1000}" id="refundTicketingDefaultPoller" default="true" max-messages-per-poll="${poller.read:-1}"/>
+	  <int-file:locker ref="refundTicketingFileLocker"/>
+	</int-file:inbound-channel-adapter>
+	
+	<int:transformer id="refundTicketingTransformer" input-channel="refundTicketingFiles"
+	    output-channel="refundTicketingRequests">
+	  <bean class="com.pay10.batch.commons.FileJobLauncher">
+	    <property name="job" ref="refundTicketingBatchJob"/>
+	    <property name="fileParameterName" value="input.file.name"/>
+	  </bean>
+	</int:transformer>
+	
+	<int:service-activator id="refundTicketingServiceActivator" method="launch" input-channel="refundTicketingRequests"
+		output-channel="nullChannel">
+		<bean class="org.springframework.batch.integration.launch.JobLaunchingMessageHandler">
+			<constructor-arg ref="refundTicketingJobLauncher"/>
+		</bean>
+	</int:service-activator>
+	
+	<bean id="refundTicketingFileLocker" class="com.pay10.batch.commons.FileLocker">
+		<property name="lockExtension" value="${refundTicketing.file.lockExtension:.lock}" />
+		<property name="nioLocker">
+		 	<bean class="org.springframework.integration.file.locking.NioFileLocker"/>
+		</property>
+	</bean>
+	
+</beans>
+	

@@ -1,0 +1,61 @@
+package com.pay10.commons.action;
+
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.struts2.dispatcher.SessionMap;
+import org.apache.struts2.interceptor.SessionAware;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.opensymphony.xwork2.interceptor.ParameterNameAware;
+import com.pay10.commons.util.BlackListedParameterNames;
+
+/**
+ * @author Puneet
+ *
+ */
+public class AbstractSecureAction extends AbstractAction implements	SessionAware,ParameterNameAware {
+
+	private static final long serialVersionUID = -5723367184317587221L;
+	
+	protected SessionMap<String, Object> sessionMap;
+	protected HttpServletRequest request;
+	protected ObjectMapper mapper = new ObjectMapper();
+
+	
+	
+	public HttpServletRequest getRequest() {
+		return request;
+	}
+
+	public void setRequest(HttpServletRequest request) {
+		this.request = request;
+	}
+
+	@Override
+	public void setSession(Map<String, Object> session){
+		this.sessionMap = (SessionMap<String, Object>) session;
+	}
+	
+	protected Map<String, Object> getSession(){
+		return sessionMap;
+	}
+	
+	protected void sessionPut(String key, Object value){
+		sessionMap.put(key, value);
+	}
+
+	@Override
+	public boolean acceptableParameterName(String parameterName) {
+
+		boolean allowedParameterName = true;
+
+		for (BlackListedParameterNames parameter : BlackListedParameterNames.values()) {
+			if (parameterName.contains(parameter.getName())) {
+				allowedParameterName = false;
+			}
+		}
+		return allowedParameterName;
+	}
+}

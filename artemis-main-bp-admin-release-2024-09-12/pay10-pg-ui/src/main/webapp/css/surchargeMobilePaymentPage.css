@@ -1,0 +1,1426 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i');
+@font-face {
+  font-family: "password-mask";
+  src: url(data:font/woff;charset:utf-8;base64,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) format("woff");
+}
+*,*:before, *:after  {
+     -webkit-box-sizing: border-box;
+     box-sizing: border-box;
+}
+html {
+    font-family: 'Roboto', sans-serif;
+     -webkit-text-size-adjust: 100%;
+     -ms-text-size-adjust: 100%;   
+}
+body {
+     margin: 0;
+     padding: 0;
+    font-size: 14px;
+     line-height: 1.42857143;
+     color: #333;
+     background-color: #fff;
+}
+article, aside, details, figcaption, figure, footer, header, hgroup, main, menu, nav, section, summary {
+     display: block;
+}
+ audio, canvas, progress, video {
+     display: inline-block;
+     vertical-align: baseline;
+}
+audio:not([controls]) {
+     display: none;
+     height: 0;
+}
+a{
+     color: #337ab7;
+     text-decoration: none;
+}
+ a:hover, a:focus, a:active {
+    color: #23527c;
+    text-decoration: underline;
+    outline: 0;
+}
+ *:focus, a:focus {
+     outline: 5px auto -webkit-focus-ring-color;
+     outline-offset: -2px;
+     outline: none;
+}
+b, strong {
+     font-weight: bold;
+}
+ h1 {
+     margin: .67em 0;
+     font-size: 2em;
+}
+ small {
+     font-size: 80%;
+}
+button, input, optgroup, select, textarea {
+     margin: 0;
+     font: inherit;
+     color: inherit;
+}
+button, select {
+     text-transform: none;
+}
+ button, html input[type="button"], input[type="reset"], input[type="submit"] {
+     -webkit-appearance: button;
+     cursor: pointer;
+}
+ input::-moz-placeholder {
+     color: #aaa;
+     opacity: 1;
+}
+ input:-ms-input-placeholder {
+     color: #aaa;
+}
+ input::-webkit-input-placeholder {
+     color: #aaa;
+}
+ button[disabled], html input[disabled] {
+     cursor: default;
+}
+ button::-moz-focus-inner, input::-moz-focus-inner {
+     padding: 0;
+     border: 0;
+}
+ input[type="checkbox"], input[type="radio"] {
+     -webkit-box-sizing: border-box;
+     box-sizing: border-box;
+     padding: 0;
+}
+img {
+     vertical-align: middle;
+}
+input[type=number] {
+    -moz-appearance:textfield;
+}
+input::-ms-clear { display: none; }
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button { 
+    -webkit-appearance: none;
+     -moz-appearance: none;
+    appearance: none;
+     margin: 0;
+     height: auto; 
+}
+h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
+     font-weight: 500;
+}
+p{
+     margin: 0 0 10px;
+}
+ .clearfix:after{
+     display: block;
+     visibility: hidden;
+     line-height: 0;
+     height: 0;
+     clear: both;
+     content: '.';
+}
+[role="button"] {
+     cursor: pointer;
+}
+.padding10{
+    padding: 10px 0;
+}
+
+ .pLabel{
+    display: block;
+     font-size: 11.5px;
+     color: #999;
+}
+.pField{
+    border:none;
+     background: none;
+     padding: 3px 0;
+     border-bottom: 2px solid #ddd;
+     width: 100%;
+     font-size: 18px;
+}
+ .pField:focus, #googlePayNum:focus, #vpaCheck:focus, #nameCheck:focus, #paymentDate:focus{
+    border-bottom-color: #012f6f;
+}
+ .container{
+    width: 100%;
+    overflow-x: hidden;
+}
+ #article{
+    padding: 25px 0;
+}
+ #header{
+     padding: 7px 25px;
+     background: #012f6f;
+      display:flex;
+align-items:center;
+justify-content:center;
+}
+ #header .ipayWhiteLogo{
+    margin: 0 27%;
+ }
+ #header span strong{
+    color: #000;
+    font-weight: 500;
+}
+ #paymentTabs{
+    right: -1px;
+    position: relative;
+}
+#lblSessionTime{
+    font-size: 14px;
+}
+ .paymentNavs{
+        margin: 0;
+    padding: 0;
+    position: relative;
+    right: -1px;
+    border-bottom:1px solid #eaeaea;
+    border-top:1px solid #eaeaea;
+    box-shadow: 0px 0px 6px #919191;
+}
+
+ .SelectPaymentType .tabLi{
+    display: block;
+    padding:3% 0;
+    color: #999999;
+    cursor: pointer;
+    text-align: left;
+    font-size: 14px;
+    border-bottom:1px solid #eaeaea;
+}
+.SelectPaymentType .tabLi:last-child{
+    
+}
+.SelectPaymentType .tabLi span.circle{
+        border: 2px solid #b8b8b8;
+    width: 18px;
+    height: 18px;
+    display: inline-block;
+    border-radius: 50%;
+    margin-left: 6%;
+    margin-right: 4%;
+    position: relative;
+    top: 4px;
+}
+.SelectPaymentType .tabLi span{
+    display: inline-block;
+}
+
+ .SelectPaymentType .tabLi.ui-state-active a{
+    color: #0C84fC;
+     font-weight: bold;
+     border-right-color: #0C84fC;
+}
+
+ .paymentNavs li a:hover{
+    text-decoration: none;
+}
+ .paymentNavs li.ui-state-active a{
+    color: #0C84fC;
+     font-weight: bold;
+     border-right-color: #0C84fC;
+}
+.margin0{
+    margin: 0;
+}
+.tabBox{
+    padding: 5% 6% 3% 6%;
+    border-bottom: 1px solid #eaeaea;
+}
+.autoDebitInner, .iMudraInner{
+        padding: 10px;
+    border: 2px solid #012f6f;
+    width: 199px;
+    margin-bottom: 20px;
+    color: #012f6f;
+}
+.deactvAutoDebit, .deactvImudra{
+    background: #ccc !important;
+    border: 2px solid #ccc !important;
+    pointer-events: none;
+}
+ #sidebar{
+    float: right;
+    width: 35%;
+    border-radius: 9px;
+    background-size: 100%;
+}
+.orderSum{ 
+    font-size: 12px;
+    position: fixed;
+    bottom: 0px;
+    left: 0;
+    z-index: 110;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    overflow: hidden;
+    display: none;
+}
+.leftOrder{
+    width: 30%;
+    float: left;
+     -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    -khtml-border-radius: 5px;
+    border-radius: 5px;
+    position: relative;
+    background:#fff;
+    position: relative;
+    display: none;
+}
+.leftOrder img.logo1{
+    display: block;
+    margin: 32% auto;
+}
+.leftOrder img.left-dot{
+       position: absolute;
+    top: 43%;
+    left: -6px;
+}
+.rightOrder{
+    width: 100%;
+    float: none;
+    background: #fff;
+    position: absolute;
+     border-radius: 10px 10px 0 0;
+     -moz-border-radius:10px 10px 0 0;
+    -webkit-border-radius:10px 10px 0 0;
+    -khtml-border-radius: 10px 10px 0 0;
+    bottom: 0;
+     box-shadow: 0px 0px 16px #000000;
+}
+.rightOrder img.right-dot{
+       position: absolute;
+    top: 43%;
+    right: -6px;
+}
+.orderDetailsHeading{
+    padding: 8px 19px 0 19px;
+}
+.orderDetailsHeading h3{
+    font-size: 16px;
+    color:#000000;
+    float: left;
+}
+.orderDetailsHeading div{
+   cursor: pointer;
+    float: right;
+    color: #bababa;
+    font-size: 20px;
+    margin-top: 6px;
+}
+.contnueBtn, .contnueBtn2{
+        padding: 6px 12px !important;
+    min-width: 128px !important;
+}
+.marginTop44{
+    margin-top: 44px;
+}
+.payment-btn.duplctBtn_saveCard, .payment-btn.duplctBtn_cc_dc, .payment-btn.duplctBtn_upi, .payment-btn.duplctBtn_gpay, .payment-btn.duplctBtn_autoDebit, .payment-btn.duplctBtn_iMudra{
+    display: none;
+}
+.paymentSections{
+    margin:0px auto 0;
+    border-top: 1px solid #eaeaea;
+}
+.headerContainer{
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    z-index: 99;
+    background: #fff;
+}
+.backBtn{
+    cursor: pointer;
+}
+ #sidebar dl{
+    border-radius: 0 0 10px 10px;
+    -webkit-box-shadow: 0 5px 5px #ddd;
+    box-shadow: 0 5px 5px #ddd;
+    padding:20px;
+    margin: 0; 
+}
+#customerName, #orderId{
+    margin-left: 0 !important;
+    word-wrap: normal !important;
+    text-align: left !important;
+}
+.greySmry{
+    color: #a1a1a1;
+}
+
+ #sidebar dl dt{
+     float: left;
+     width: 111px;
+     padding: 0px;
+     clear: both;
+    margin-bottom: 12px;
+}
+#sidebar dl dt.greySmry.myOrdrId{
+    float: none;
+}
+#innerAmount, #surcharge{
+    font-weight: 700 !important;
+    font-size: 14px !important;
+}
+ #sidebar dl dd{
+    margin-left: 130px;
+     display: block;
+     padding: 0px;
+     text-align: right;
+    word-wrap: break-word;
+    font-weight: 500;
+}
+.color-sky{
+    color: #012f6f;
+}
+#buyer, #customerName{
+    padding-left: 5px !important;
+}
+#buyer{
+    float: none !important; 
+}
+#wwgrp_lblSessionTime{
+    display: inline-block;
+    width: 38px;
+}
+.savedCards{
+    list-style: none;
+     margin: 0;
+     padding: 0;
+}
+.selectedCard{
+    display: inline-block;
+}
+.delete_cnf{
+    background: #fff;
+    width: 280px;
+    height: 108px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-top: -54px;
+    margin-left: -140px;
+    border-radius: 4px;
+    padding: 15px;
+    text-align: center;
+    color: #656566;
+}
+.delete_cnf button{
+    border: none;
+    color: #fff;
+   padding: 5px 25px;
+    border-radius: 25px;
+    margin: 0 5px;
+}
+.delete_cnf button.yes_delete{
+    background: #012f6f;
+}
+.delete_cnf button.no_delete{
+    background: #dc3545;
+}
+
+.loader {
+  position: fixed;
+  opacity: 1;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+  z-index: 111;
+background: rgba(0,0,0,0.5);
+}
+
+.loaderInner {
+  position: fixed;
+  left: 0px;
+  top: 0px;
+  border: 16px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 16px solid #3498db;
+  width: 120px;
+  height: 120px;
+  -webkit-animation: spin 2s linear infinite; 
+  animation: spin 2s linear infinite;
+  top:43%;
+  left: 50%;
+  margin-top: -60px;
+  margin-left: -60px;
+}
+
+.loader .approvedNotification{
+        text-align: center;
+    position: absolute;
+    top: 52%;
+    width: 100%;
+    color: #fff;
+    display: none;  
+}
+.loader .approvedNotification h3{
+        font-weight: 400;
+    font-size: 21px;
+    margin-bottom: 5px;
+}
+.loader .approvedNotification p{
+    font-size: 16px;
+    font-weight: 300;
+}
+.loader .approvedNotification button.cancelBtn{
+    background: #dc3545;
+    border: none;
+    padding: 8px 25px;
+    border-radius: 25px;
+    color: #fff;
+}
+.loader .approvedNotification button:disabled,
+.loader .approvedNotification button[disabled]{
+  opacity: 0.6;
+}
+
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+#sidebar dl dt{
+     margin-bottom: 5px !important;
+ }
+.upiBox input[type='text'], .googlePayBox input[type='number']{
+    border:none;
+     background: none;
+     width: 300px;
+     padding: 3px;
+     border-bottom: 2px solid #ddd;
+     box-shadow: none;
+     font-size: 18px;
+}
+.upiBox label{
+    color: #999;
+}
+.red1, .red2, .error1, .error2{
+    color: red;
+    display:none;
+    font-size: 12px;
+  
+}
+.resultDiv{
+        min-height: 18px;
+        margin-top: 4px;
+}
+.resultDiv p{
+    margin:0;
+}
+.orderfootDetails{
+    font-size: 80%;
+    padding: 11px 6px;
+    text-align: center;
+    width: 90%;
+    margin:0 auto;
+}
+#gpayLi img{
+    width: 43px;
+}
+.upiBox .payActive, .googlePayBox .payActive, 
+.duplctBtn_gpay.payActive, 
+.PhoneOrderSumry .contnueBtn, 
+.midSec .contnueBtn2, 
+.saveCardBox .payActive, .duplctBtn_saveCard.payActive{
+    background: #012f6f;
+    border-color: #012f6f;
+}
+.duplctBtn_upi.payActive{
+    background: #012f6f;
+    border-color: #012f6f;
+}
+.duplctBtn_iMudra.payActive{
+    background: #012f6f;
+    border-color: #012f6f;
+}
+.powrdBy{
+    font-size: 10px;
+    color: #95989a;
+    text-align: right;
+}
+.float-left{
+    float: left;
+}
+.float-right{
+    float: right;
+}
+.footer .float-left p{
+    font-size: 9px;
+    color: #95989a;
+    margin-top: 7px;
+    margin-left: 8px;
+}
+.hideBox{
+    display: none !important;
+}
+.SelectPaymentType .activeLi{
+    background: #f4f4f4;
+}
+.SelectPaymentType .activeLi span.circle{
+    border-color: #012f6f;
+}
+.SelectPaymentType .activeLi span.circle:after{
+       width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #012f6f;
+    display: inline-block;
+    content: '.';
+    position: absolute;
+    left: 3px;
+    top: 3px;
+}
+.non{
+    display: none;
+}
+.displayNon{
+    display: none !important;
+}
+.phoneAmountPayble .amountPayablePhone{
+    color: #012f6f;
+    margin-bottom: 0;
+    font-size: 15px;
+    font-weight: 500;
+    float: left;
+}
+.phoneAmountPayble .seeOrderDetails{
+    color:#999999;
+     margin-bottom: 0;
+     float: right;
+     cursor: pointer;
+}
+.payBtnBoxMob{
+    width: 128px;
+    float: right;
+    margin-right: 20px;
+}
+.contnue-box button{
+
+}
+ .savedCards li{
+    padding-bottom: 2%;
+    position: relative;
+    margin: 0 2% 2% 0;
+    border: 1px solid #e8e8e8;
+    border-radius: 4px;
+    float: left;
+    background: #f4f4f4;
+    width: 48%;
+}
+.savedCards .row1 {
+    position: relative;
+}
+.savedCards .row2 {
+    margin-left: 15%;
+}
+ .savedCards li:hover{
+     border-color:#ccc;
+}
+ .savedCards li.active{
+    border-color: #0bce22;
+    border-radius: 3px;
+    background: #e8f5fd;
+}
+
+ .savedCards li .img{
+    margin-left: -16px;
+    margin-top: 1px;
+}
+ .savedCards li span{
+    float: left;
+    margin-top: 4.5%;
+}
+ .savedCards li .savedCvv span{
+        display: block;
+    position: absolute;
+    top: 0px;
+    left: 3px;
+    z-index: 2;
+    font-size: 12px;
+ }
+
+ .savedCards li small{
+    color: #656566;
+    margin-left: 13%;
+    margin-right: 3%;
+}
+.row2 label {
+    display: inline-block;
+    width: 38px;
+}
+.row2 label img {
+    width: 100%;
+}
+ .savedCards li .savedCvv{
+    display: inline-block;
+    position: relative;
+}
+.savedCards li .savedCvv input{
+    width: 46px;
+    padding: 0 6px;
+    color: #999;
+    font-size: 13px;
+    position: relative;
+    z-index: 3;
+}
+ .savedCards li.active .savedCvv{
+    opacity: 1;
+     filter:alpha(opacity=100);
+}
+ .savedCards li .close{
+    float: right;
+    margin: 2% 3% 0 0;
+}
+ .savedCards li .close:hover{
+     text-decoration: none;
+     color: #0C84fC;
+}
+ .cardSection{
+     width: 300px;
+}
+#googlePayBtn{
+    margin-top: 3%;
+}
+ .validity{
+    float: left;
+     width: 45%;
+     position: relative;
+     margin-top: 14px;
+}
+.cvvValidate{
+    float: right;
+    width: 45%;
+    min-height: 18px;
+    margin-left: 2.5%;
+}
+.validExpDate{
+    float: left;
+    width: 45%;
+    min-height: 18px;
+    margin-left: 1.5%;
+}
+.userMoptype{
+    position: absolute;
+    top: 7px;
+    right: 5px;
+    width: 40px;
+    height: 24px;
+    border-radius: 3px;
+    overflow: hidden;
+}
+.userMoptype img{
+    width: 100%;
+    height: 100%;
+}
+ .cvv{
+    float: right;
+     width: 45%;
+     position: relative;
+    margin-top: 15.1px;
+}
+#cvvNumber, .savDetailsCvv{
+    font-family: password-mask;
+}
+#cvvNumber::placeholder {
+  color: #fff;
+  opacity: 1; 
+}
+
+#cvvNumber:-ms-input-placeholder { 
+ color: #fff;
+}
+
+#cvvNumber::-ms-input-placeholder { 
+ color: #fff;
+}
+img.info{
+       position: absolute;
+    top: 8px;
+    right: 12px;
+    cursor: pointer;
+}
+.whatIsCvv{
+   position: absolute;
+    width: 270px;
+    background: #ffffff;
+    box-shadow: 0 0 1px 1px #e7e7e7;
+    border-radius: 10px;
+    text-align: center;
+    left: 50%;
+    top: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+}
+.whatIsCvv h2{
+     font-size: 14px;
+     
+}
+.whatIsCvv img{
+    display: block;
+    margin: 10px auto;
+}
+.whatIsCvv p{
+    color: #6e6f70;
+    font-size: 12px;
+    padding: 0 6%;
+}
+.whatIsCvv .okDiv{
+    font-size: 14px;
+    font-weight: 700;
+    color: #012F6F;
+    border-top: 1px solid #e5e5e5;
+    padding: 10px 0;
+    cursor: pointer;
+
+}
+
+.displyNon{
+    display: none !important;
+}
+.vpaSection, .vpaName{
+    position: relative;
+}
+.vpaName{
+    margin-top: 20px;
+}
+.validityDateCard{
+    border: none;
+    background: none;
+    padding: 3px 0;
+    border:none;
+    border-bottom: 2px solid #ddd;
+    width: 100%;
+    margin:0 1%;
+    font-size: 18px;
+}
+.CTA{
+    margin: 15px 0;
+}
+ .CTA-nb{
+    margin: 15px 0;
+}
+.redLine{
+    border-bottom: 2px solid #ff0000 !important;
+}
+ .payment-btn{
+    background: #ccc;
+    color: #fff;
+    padding: 8px 15px;
+    font-size: 14px;
+    text-transform: capitalize;
+    text-align: center;
+    font-weight: 600;
+    border-radius: 25px;
+    border: 2px solid #ccc;
+    min-width: 150px;
+    cursor: pointer !important;
+}
+.mrgnbtn11{
+    margin-bottom: 11px;
+}
+.googlePayDiv{
+    position: relative;
+}
+.adsSection{
+    width: 90%;
+    height: auto;
+    background: grey;
+    text-align: center;
+    color: 000;
+    margin:0px auto;
+    font-size: 30px;
+    display: none;
+    margin-top: 48px;
+}
+.adsSection img{
+    width: 100%;
+}
+.payment-btn-autoDebit, .payment-btn-iMudra{
+    background: #012f6f;
+    color: #fff;
+    padding: 8px 15px;
+    font-size: 14px;
+    text-transform: capitalize;
+    text-align: center;
+    font-weight: 600;
+    border-radius: 25px;
+    border: 2px solid #012f6f;
+    min-width: 150px;
+}
+
+.btn-active{
+    background: #0C84fC;
+    color: #fff;
+    border: 2px solid #0C84fC;
+    padding: 8px 15px;
+    font-size: 14px;
+    text-transform: capitalize;
+    text-align: center;
+    font-weight: 600;
+    border-radius: 5px;
+    min-width: 150px;
+    cursor: pointer;
+}
+.cvvErrorSav{
+    font-size: 12px;
+    color: red;
+    display: none;
+    margin: 0;
+}
+.CTAInfo{
+    display: block;
+     font-size: 9px;
+     color: #999;
+     padding: 0;
+     margin-top: -5px;
+}
+ .CTAInfo-nb{
+    display: block;
+     font-size: 9px;
+     color: #999;
+     padding: 0;
+     margin: -7px 0;
+}
+ .CTA button.payment-btn{
+    background: #ccc;
+     color: #fff;
+     padding: 8px 15px;
+     font-size: 14px;
+     text-transform: capitalize;
+     text-align: center;
+     font-weight: 600;
+     border-radius: 5px;
+     border: 2px solid #ccc;
+     min-width: 200px;
+}
+ 
+ .nbSection{
+    list-style: none;
+     margin: -5px -10px;
+     padding: 0;
+}
+ .nbSection li{
+    float: left;
+     width: 80px;
+     padding: 10px;
+     cursor: pointer;
+}
+ .nbSection li img{
+    width: 70px;
+     height: 70px;
+     border-radius: 50%;
+     -webkit-box-shadow: 0 5px 10px #999;
+     box-shadow: 0 5px 10px #999;
+     border: 2px solid #fff;
+}
+ .nbSection li.active img{
+    border-color: #0C84fC;
+}
+.dplctBtnGrp{
+    margin-bottom: 7px;
+}
+ .footer{
+    border-top: 1px solid #ccc;
+    padding: 6px 0;
+    margin-bottom: 44px;
+}
+.left-footer{
+        width: 190px;
+        margin: 0 auto 10px;
+    }
+ .left-footer img{
+    width: 100%;
+}
+.right-footer{
+        width: 110px;
+        float: right;
+        text-align: center;
+        margin-right: 19px;
+       
+    }
+.right-footer img{
+    display: block;
+    float: right;
+}
+ .savedCards li .sel-icon{
+    display:none;
+    margin: -2px 15px;
+}
+ .savedCards li.active .sel-icon{
+    display:block;
+    margin: -2px 15px;
+}
+.savedCards li.active .card-dtls{
+    margin-top: -58px;
+    margin-left: 50px;
+}
+.visaRadio{
+    margin: 6% 3% 0% 6%;
+    float: left;
+} 
+#sidebar dl{
+    box-shadow: none;
+}
+.div-main{
+     box-shadow: 0px 0px 15px #999;
+     -webkit-box-shadow: 0px 0px 15px #999;
+}
+.logo{
+   display: block;
+    width: 13%;
+    float: left;
+    margin-top: 0.3%;
+}
+ .logo-ssn{
+   text-align: right;
+    font-size: 12px;
+    display: block;
+    float: right;
+    width: 40%;
+    padding-top:2%;
+}
+.logo-ssn strong{
+    font-weight: 400;
+    color: #000000;
+}
+.logo-ssn strong span{
+    font-weight: 400;
+    color: #95989a;
+}
+.CTA button.payment-btn:hover, .CTA button.payment-btn:active{
+     background: #0C84fC;
+     border-color: #0C84fC;
+}
+ .m-top input{
+    border:none;
+    background: none;
+}
+.btnDisable{
+    pointer-events: none;
+    opacity: 0.2;
+}
+.returnMerchand, .googlePayReturnMerchant{
+    text-align: center;
+    font-size: 12px;
+    margin: 10px 0;
+}
+.returnMerchand a, .googlePayReturnMerchant a{
+     text-align: center;
+        display: inline-block;
+        float: none;
+        margin: 0 auto;
+        text-decoration: underline;
+        padding:0;
+}
+#totalAmountName{
+    font-size: 14px;
+}
+#totalAmountName b{
+    font-weight: 500;
+}
+
+#totalAmount{
+    font-size: 16px;
+}
+.dottedBorder{
+    border-top:1px dotted #000;
+    border-bottom:1px dotted #000;
+    padding: 9px 6px;
+    margin: 9px 0;
+}
+ .float-save{
+    float:left;
+    clear:left;
+    text-decoration: underline;
+    font-size: 12px;
+    margin-top: 3px;
+}
+
+ .paylogo{
+   position: relative;
+    top: 3px;
+    width: 70px;
+}
+.cardNumber1{
+    position: relative;
+    padding-top: 7px;
+}
+.allCreditCard{
+    margin: 10px 0;
+    display: none !important;
+}
+.allCreditCard img{
+    margin: 0 4px;
+    width: 40px;
+}
+ .text-danger {
+    color: red
+}
+.text-danger1 {
+    color: red;
+    font-size: 12px;
+    display: none;
+}
+
+ .transparent {
+    opacity:0.1;
+}
+ .active{
+    border: 2px solid #0c84fc!important;
+}
+ .chk-save{
+    font-size: 11px;
+    color: #999;
+    top: -3px;
+    position: relative;
+    margin-left: 6px;
+    font-weight: 500;
+}
+.CTANote{
+    margin-top: 15px;
+}
+.logoPhone{
+    width: 140px;
+    display: inline-block;
+}
+.logoPhone img{
+    width: 100%;
+}
+.phoneOrderFoot{
+    display: none;
+}
+.hemberger{
+   width: 30px;
+   float: right; 
+}
+
+.bar1, .bar2, .bar3 {
+    
+    height: 4px;
+    background-color: #333;
+    margin: 4px 0;
+    transition: 0.4s;
+    display: block;
+}
+
+.change .bar1 {
+    -webkit-transform: rotate(-45deg) translate(-9px, 6px);
+    transform: rotate(-45deg) translate(-5px, 6px);
+}
+
+.change .bar2 {opacity: 0;}
+
+.change .bar3 {
+    -webkit-transform: rotate(45deg) translate(-8px, -8px);
+    transform: rotate(45deg) translate(-5px, -8px);
+}
+.activeMob{
+    zoom:1.1;
+    transition: zoom all ease 0.5s;
+    -webkit-transition: zoom all ease 0.5s;
+      -moz-transition: zoom all ease 0.5s;
+      -o-transition: zoom all ease 0.5s;
+}
+.vpaPara{
+    width: 300px;
+    display: block;
+    font-size: 11px;
+}
+.top10{
+    margin-top: 10px;
+    display: block;
+}
+.right-footer2{
+            width: 145px;
+    float: left;
+    margin-top: 5px;
+    margin-left: 19px;
+}
+.right-footer span, .right-footer2 span{
+    font-size: 11px;
+    color: grey;
+}
+
+.PhoneOrderSumry{
+    background: #fff;
+    color: #fff;
+    padding: 13px 18px;
+        position: fixed;
+    z-index: 99;
+    bottom: 0;
+    width: 100%;
+        box-shadow: 0px 0px 16px #919191;
+        left: 0px;
+    -moz-border-radius: 5px 5px 0 0;
+    -webkit-border-radius: 5px 5px 0 0;
+    -khtml-border-radius: 5px 5px 0 0;
+    border-radius: 5px 5px 0 0;
+}
+#radioErrorDiv p{
+    margin: 0;
+}
+
+#divName{
+    position: relative;
+    margin-top: 5px;
+}
+.opct{
+    background: rgba(0,0,0,0.5);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 99;
+    display: none;
+}
+.placeHolderText{
+  pointer-events: none;
+  position:absolute;
+ left: 8px;
+top: 2px;
+  transition: 0.4s;
+  transition-timing-function: ease;
+  transition-timing-function: cubic-bezier(0.5, 0.1, 0.25, 1);
+  font-size: 18px;
+  color: #000;
+}
+.placeHolderTextCardNum{
+    top: 9px;
+}
+.inputField:focus + .placeHolderText, .inputField:not(:placeholder-shown) + .placeHolderText {
+  opacity:1;
+  transform: scale(0.70) translateY(-100%) translateX(-40px);
+  color: #999;
+}
+
+.inputField:focus + .placeHolderText.placeHolderTextCardNum, .inputField:not(:placeholder-shown) + .placeHolderText.placeHolderTextCardNum {
+  transform: scale(0.70) translateY(-110%) translateX(-34px);
+}
+
+.inputField:focus + .placeHolderText.placeHolderTextCvv, .inputField:not(:placeholder-shown) + .placeHolderText.placeHolderTextCvv {
+  transform: scale(0.70) translateY(-100%) translateX(-20px);
+}
+.inputField:focus + .placeHolderText.placeHolderTextNameOnCard, .inputField:not(:placeholder-shown) + .placeHolderText.placeHolderTextNameOnCard {
+  transform: scale(0.70) translateY(-100%) translateX(-35px);
+}
+.inputField:focus + .placeHolderText.placeHolderTextVPA, .inputField:not(:placeholder-shown) + .placeHolderText.placeHolderTextVPA {
+  transform: scale(0.70) translateY(-108%) translateX(-52px);
+}
+.inputField:focus + .placeHolderText.placeHolderTextVPAName, .inputField:not(:placeholder-shown) + .placeHolderText.placeHolderTextVPAName {
+  transform: scale(0.70) translateY(-100%) translateX(-20px);
+}
+.inputField:focus + .placeHolderText.placeHolderTextgooglePay, .inputField:not(:placeholder-shown) + .placeHolderText.placeHolderTextgooglePay {
+  transform: scale(0.70) translateY(-117%) translateX(-37px);
+}
+.inputField:focus + .placeHolderText.placeHolderTextExpDate, .inputField:not(:placeholder-shown) + .placeHolderText.placeHolderTextExpDate {
+  transform: scale(0.70) translateY(-100%) translateX(-19px);
+}
+
+
+
+.inputField:focus + .placeHolderText, .inputField:not(:-ms-input-placeholder) + .placeHolderText {
+  opacity:1;
+  transform: scale(0.70) translateY(-100%) translateX(-40px);
+}
+.inputField:focus + .placeHolderText.placeHolderTextCardNum, .inputField:not(:-ms-input-placeholder) + .placeHolderText.placeHolderTextCardNum {
+  transform: scale(0.70) translateY(-110%) translateX(-34px);
+}
+.inputField:focus + .placeHolderText.placeHolderTextCvv, .inputField:not(:-ms-input-placeholder) + .placeHolderText.placeHolderTextCvv {
+  transform: scale(0.70) translateY(-100%) translateX(-20px);
+}
+.inputField:focus + .placeHolderText.placeHolderTextNameOnCard, .inputField:not(:-ms-input-placeholder) + .placeHolderText.placeHolderTextNameOnCard {
+  transform: scale(0.70) translateY(-100%) translateX(-35px);
+}
+.inputField:focus + .placeHolderText.placeHolderTextVPA, .inputField:not(:-ms-input-placeholder) + .placeHolderText.placeHolderTextVPA {
+  transform: scale(0.70) translateY(-108%) translateX(-52px);
+}
+.inputField:focus + .placeHolderText.placeHolderTextVPAName, .inputField:not(:-ms-input-placeholder) + .placeHolderText.placeHolderTextVPAName {
+  transform: scale(0.70) translateY(-100%) translateX(-20px);
+}
+.inputField:focus + .placeHolderText.placeHolderTextgooglePay, .inputField:not(:-ms-input-placeholder) + .placeHolderText.placeHolderTextgooglePay {
+  transform: scale(0.70) translateY(-117%) translateX(-37px);
+}
+.inputField:focus + .placeHolderText.placeHolderTextExpDate, .inputField:not(:-ms-input-placeholder) + .placeHolderText.placeHolderTextExpDate {
+  transform: scale(0.70) translateY(-100%) translateX(-19px);
+}
+
+@media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+   img.info{
+    right: 20px;
+  }
+}
+
+@supports (-ms-ime-align: auto) {
+  .placeHolderText {
+        top: -15px !important;
+        left: 0px !important;
+  }
+  .placeHolderText{
+    font-size: 14px;
+  }
+}
+
+@media screen and (max-width: 1400px) {
+    #article{min-height: 500px;}
+}
+@media screen and (max-width: 1080px) {
+    #paymentTabs{width:18%;}
+    .logo{width: 17%;}
+}
+
+
+@media screen and (max-width: 992px) {
+    #gpayLi img {width: 37px;}
+    .paymentNavs{right: 0;}
+    #sidebar {width: 40%; font-size: 14px;}
+    .active1{border:none;}
+    .upiBox input[type='text']{width: 70%;}   
+}
+
+@media only screen and (max-width : 800px) {
+  #sidebar dl{padding: 15px;}
+}
+@media only screen and (max-width : 768px) {
+    #article {min-height: auto;}
+    .logo {width: 21%;}
+}
+
+@media only screen and (max-width : 680px) {
+    #sidebar{
+        background: none;
+        border-radius: 6px;
+        margin-top: 4px !important;
+    }
+    .returnMerchand a{margin-left: 0;}
+    .payment-btn, .btn-active{display: block; margin: 0 auto;
+    }
+    .autoDebitInner, .iMudraInner { margin: 0 auto 20px;}
+    .payment-btn-autoDebit, .payment-btn-iMudra{margin: 0 auto; display: block;}
+    .radioErrorDiv{text-align: center;}
+    .saveDetailsReturn{text-align: center;}
+    .saveDetailsReturn .float-save {float: none; margin-top: 0px;}
+    .paymentNavs{
+        overflow: hidden;
+        transition: all 500ms linear;
+        transition-timing-function: cubic-bezier(0, 1, 0.5, 1);
+    }
+    #article {padding: 0 0px 20px 0;}
+    .desktopOrderFoot{display: none;}
+    .phoneOrderFoot{display: block;}
+    #sidebar dl{margin: 0; padding: 5px 15px;}
+    #sidebar dl dd big {font-size: 13px;}
+    #sidebar dl dd{margin-bottom: 3px;}
+    .logo, .logo-ssn{display: none;}
+   .paymentSections, #sidebar{
+        float:none;
+        width:100%;
+    }
+    #paymentTabs{width: 100%;}
+    .logo{ width: 25%;}
+    .logo-ssn{ width: 30%;}
+    .cardSection{width: 100%; margin: 0 auto;}
+    #divSaveCard, #mainCTAInfo{
+        text-align: center;
+    }
+    .vpaPara{
+        text-align: center;
+        width: 100%;
+    }
+    #sidebar h2 {
+        padding: 9px;
+        font-size: 12px;
+    }
+    .upiBox input[type='text'], .googlePayBox input[type='number']{width: 100%;}
+}
+
+@media only screen and (max-width : 590px) {
+    .btn-active{
+        display: block;
+        margin: 0 auto;
+    }
+}
+
+@media only screen and (max-width : 570px) {
+    .logo {width: 100%;}
+    .btn-active{
+        display: block;
+        margin: 0 auto;
+    }
+    .loader .approvedNotification{
+        padding: 0 6%;
+    }
+    .loaderInner{
+        width: 100px;
+        height: 100px;
+        left: 52%;
+    }
+    .loader .approvedNotification h3{
+        font-size: 18px;
+    }
+    .loader .approvedNotification p{
+        font-size: 15px;
+    }
+}
+@media only screen and (max-width : 530px) {
+    .savedCards li{  
+        width: 100%;   
+    }
+}
+
+
+@media only screen and (max-width : 480px) {
+.logo img{
+    margin:0 auto; 
+    display:block;
+}
+.powered {
+    margin: 8px 0;
+    display: block;
+    text-align: center;
+}
+}
+
+@media only screen and (max-width : 440px) {
+.cardSection {
+    width: 100%;
+    padding-right: 0;      
+}
+#header .ipayWhiteLogo{
+    margin: 0 27%;
+ }
+}
+@media only screen and (max-width : 380px) {
+#header .ipayWhiteLogo{
+    margin: 0 25%;
+ }
+}
+
+@media screen and (orientation:landscape) {
+    .headerContainer{
+        position: static;
+    }
+    .marginTop44{
+        margin-top: 0;
+    }
+    #article{
+        padding-top: 0;
+    }
+   .PhoneOrderSumry{
+    display: none;
+   }
+   .footer{
+    margin-bottom: 2px;
+   }
+}
+

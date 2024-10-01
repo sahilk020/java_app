@@ -1,0 +1,35 @@
+buildscript {
+	ext {
+		springBootVersion = '1.5.6.RELEASE'
+	}
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+	}
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'org.springframework.boot'
+
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = 1.8
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	compile project (':pay10-commons')
+	compile('org.springframework.boot:spring-boot-starter-web')
+compile group: 'org.hibernate', name: 'hibernate-core', version: '5.2.1.Final'
+    compile group: 'org.hibernate', name: 'hibernate-c3p0', version: '5.2.1.Final'
+    compile group: 'org.hibernate', name: 'hibernate-ehcache', version: '5.2.1.Final'
+    compile group: 'org.apache.struts', name: 'struts2-convention-plugin', version: '2.5.30'
+    compile group: 'org.apache.cxf', name: 'cxf-api', version: '2.4.0'
+    compile group: 'javax.mail', name: 'mail', version: '1.4.4'
+	//runtime('org.springframework.boot:spring-boot-devtools')
+	testCompile('org.springframework.boot:spring-boot-starter-test')
+}

@@ -1,0 +1,1064 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.5//EN"
+        "http://struts.apache.org/dtds/struts-2.5.dtd">
+
+
+<struts>
+	<package name="zeusmain" extends="struts-default,json-default" namespace="/jsp">
+
+	<!-- 	<global-results>
+			<result name="error" type="redirect">error</result>
+			<result name="login" type="redirect">loginResult</result>
+			<result name="invalid.token">loginResult</result>
+			<result name="timeout">sessionTimeout</result>
+		</global-results> -->
+
+	<!-- 	<global-exception-mappings>
+			<exception-mapping exception="java.lang.Exception" result="error" />
+		</global-exception-mappings> -->
+			<action name="error" >
+			<result>error.jsp</result>
+		</action> 
+		<!-- Session Manage-->
+		<action name="sessionTimeout" class="com.pay10.pg.action.SessionTimeoutRedirectionAction">
+			<result name="success">sessionTimeout.jsp</result>
+		</action>
+		<!-- Session Manage-->
+		<action name="irctcRequestAction" class="com.pay10.pg.action.RequestActionIRCTC">
+	   <result name="paymentPage" type="redirectAction">
+		<param name="actionName">locale</param>
+		<param name="request_locale">${defaultLanguage}</param>
+		<param name="defaultLanguage">${defaultLanguage}</param>
+	</result>
+	
+	
+		
+	<result name="surchargePaymentPage" type="redirectAction">
+		<param name="actionName">surchargelocale</param>
+		<param name="request_localeA">${defaultLanguage}</param>
+		<param name="defaultLanguageA">${defaultLanguage}</param>
+	</result>
+	
+	<result name="surchargeMobilePaymentPage" type="redirectAction">
+		<param name="actionName">surchargelocaleMobile</param>
+		<param name="request_localeA">${defaultLanguage}</param>
+		<param name="defaultLanguageA">${defaultLanguage}</param>
+	</result>
+	
+	<result name="invalidRequest">invalidRequest.jsp</result>
+	<result name="paymentPage">paymentPage.jsp</result>
+</action>	
+
+		<!-- Payment Page Landing Action -->
+		<action name="paymentrequest" class="com.pay10.pg.action.RequestAction">
+			<result name="paymentPage" type="redirectAction">
+			  <param name="actionName">locale</param>	
+			  <param name="request_locale">${defaultLanguage}</param>
+			  <param name="defaultLanguage">${defaultLanguage}</param>	 		
+			</result>
+			<result name="surchargePaymentPage" type="redirectAction">
+			  <param name="actionName">surchargelocale</param>	
+			  <param name="request_localeA">${defaultLanguage}</param>
+			  <param name="defaultLanguageA">${defaultLanguage}</param>	 		
+			</result>
+			<result name="irctcPaymentPage" type="redirectAction">
+			  <param name="actionName">surchargelocaleIrctc</param>	
+			  <param name="request_localeA">${defaultLanguage}</param>
+			  <param name="defaultLanguageA">${defaultLanguage}</param>	 		
+			</result>
+			<result name="surchargeMobilePaymentPage" type="redirectAction">
+			  <param name="actionName">surchargelocaleMobile</param>	
+			  <param name="request_localeA">${defaultLanguage}</param>
+			  <param name="defaultLanguageA">${defaultLanguage}</param>	 		
+			</result>
+			<result name="intentPage" type="redirectAction">
+			  <param name="actionName">intentlocale</param>	
+			  <param name="request_localeA">${defaultLanguage}</param>
+			  <param name="defaultLanguageA">${defaultLanguage}</param>	 		
+			</result>
+			<result name="invalidRequest">invalidRequest.jsp</result>
+			<result name="paymentPage">paymentPage.jsp</result>
+		</action>	 
+
+		<!-- Payment Page Landing Action -->
+
+
+		<!-- UPI Redirection Action -->
+		<action name="upiRedirect"
+			class="com.pay10.pg.action.UpiRedirectAction">
+			<interceptor-ref name="defaultStack" />
+			<result name="success">response.jsp</result>
+			<result name="paymentPage">paymentPage.jsp</result>
+			<result name="redirecturl" type="redirect">${redirectUrl}</result>
+		</action>
+		
+		<action name="loadUpiWaitPage" class="com.pay10.pg.action.DisplayUpiLoadingPage">
+			<result name="success">upiWaitPage.jsp</result>
+		</action>
+		<!-- UPI Redirection Action -->
+		
+			<action name="canaraBankNBResponseAction"
+				class="com.pay10.pg.action.CanaraNBResponseAction">
+			<result name="surchargePaymentPage" type="redirectAction">
+				<param name="actionName">surchargelocale</param>
+				<param name="request_localeA">${defaultLanguage}</param>
+				<param name="defaultLanguageA">${defaultLanguage}</param>
+			</result>
+		</action>
+
+		<action name="TFPResponseAction"
+				class="com.pay10.pg.action.TFPResponseAction">
+			<result name="surchargePaymentPage" type="redirectAction">
+				<param name="actionName">surchargelocale</param>
+				<param name="request_localeA">${defaultLanguage}</param>
+				<param name="defaultLanguageA">${defaultLanguage}</param>
+			</result>
+		</action>
+<action name="idfcResponseAction"
+			class="com.pay10.pg.action.idfcResponseAction">
+			<result name="surchargePaymentPage" type="redirectAction">
+				<param name="actionName">surchargelocale</param>
+				<param name="request_localeA">${defaultLanguage}</param>
+				<param name="defaultLanguageA">${defaultLanguage}</param>
+			</result>
+		</action>
+		<action name="jammuandkishmirResponse"
+			class="com.pay10.pg.action.service.JammuandKashmirResponseAction">
+			<result name="surchargePaymentPage" type="redirectAction">
+				<param name="actionName">surchargelocale</param>
+				<param name="request_localeA">${defaultLanguage}</param>
+				<param name="defaultLanguageA">${defaultLanguage}</param>
+			</result>
+		</action>
+		<!-- Buy Button on Payment Page Action -->
+		<action name="pay" class="com.pay10.pg.action.RequestAction" method="acquirerHandler">
+	            <interceptor-ref name="defaultStack" />
+			<result name="success">response.jsp</result>
+			<result name="paymentPage">paymentPage.jsp</result>
+			<result name="redirecturl" type="redirect">${redirectUrl}</result>
+		</action>
+		<!-- Buy Button on Payment Page Action -->
+
+		<!-- Delete Existing Token -->
+		<action name="deletecard" class="com.pay10.pg.action.RequestAction" method="deleteSavedCard">
+			<result name="success">paymentPage.jsp</result>
+		</action>
+		<!-- Delete Existing Token -->
+
+		<!-- Merchant Hosted Transaction Process -->
+		<action name="merchantPaymentInit" class="com.pay10.pg.action.MerchantHostedRequestAction">
+			<result name="redirecturl" type="redirect">${redirectUrl}</result>
+			<result name="invalidRequest">invalidRequest.jsp</result>
+			<result name="success" type="json"></result>
+			
+			<result name="upiLoader">upiMerchantHosted.jsp</result>
+		</action>
+		<!-- Merchant Hosted Transaction Process -->
+
+<action name="kotakOtpPage" class="com.pay10.pg.action.KotakOptAction">
+			<interceptor-ref name="defaultStack" />
+			<result name="OptPage">kotakOtpPage.jsp</result>
+			<result name="invalidRequest">kotakOtpPage.jsp</result>
+		</action>
+		<action name="kotakResponseCard" class="com.pay10.pg.action.KotakResponseCardAction">
+			<result name="surchargePaymentPage" type="redirectAction">
+			  <param name="actionName">surchargelocale</param>	
+			  <param name="request_localeA">${defaultLanguage}</param>
+			  <param name="defaultLanguageA">${defaultLanguage}</param>	 		
+			</result>
+		</action>
+		
+		<action name="HtpayNotifyResponse" class="com.pay10.pg.action.HtpayNotifyResponseAction">
+			<result name="surchargePaymentPage" type="redirectAction">
+			  <param name="actionName">surchargelocale</param>	
+			  <param name="request_localeA">${defaultLanguage}</param>
+			  <param name="defaultLanguageA">${defaultLanguage}</param>	 		
+			</result>
+		</action>
+		
+		
+		<action name="pay10Response" class="com.pay10.pg.action.PaytenResponseAction">
+			<result name="paymentPage">paymentPage.jsp</result>
+		</action>
+			<action name="paymentEdgeResponse" class="com.pay10.pg.action.PaymentEdgeResponseAction">
+			<result name="paymentPage">paymentPage.jsp</result>
+		</action>
+		<action name="HtpayResponse" class="com.pay10.pg.action.HtpayResponseAction">
+			<result name="surchargePaymentPage" type="redirectAction">
+			  <param name="actionName">surchargelocale</param>	
+			  <param name="request_localeA">${defaultLanguage}</param>
+			  <param name="defaultLanguageA">${defaultLanguage}</param>	 		
+			</result>
+		</action>
+
+		<!-- FSS Response Processor -->
+		<action name="payment3ds" class="com.pay10.pg.action.ResponseAction">
+			<result name="surchargePaymentPage" type="redirectAction">
+			  <param name="actionName">surchargelocale</param>	
+			  <param name="request_localeA">${defaultLanguage}</param>
+			  <param name="defaultLanguageA">${defaultLanguage}</param>	 		
+			</result>
+		</action>
+		<!-- FSS Response Processor -->
+		
+		
+		<!-- UPI Response action -->
+		<action name="upiResponse"
+			class="com.pay10.pg.action.UpiResponseAction">
+			<interceptor-ref name="defaultStack" />
+			<result name="success">surchargePaymentPage.jsp</result>
+			<result name="error">surchargePaymentPage.jsp</result>
+		</action>
+		<!-- UPI Response action -->
+		
+		<!-- Rupay Response Processor -->
+		<action name="rupayResponse" class="com.pay10.pg.action.RupayResponseAction">
+			<result name="surchargePaymentPage" type="redirectAction">
+			  <param name="actionName">surchargelocale</param>	
+			  <param name="request_localeA">${defaultLanguage}</param>
+			  <param name="defaultLanguageA">${defaultLanguage}</param>	 		
+			</result>
+		</action>
+		<!-- Rupay Response Processor -->
+		
+		<action name="cityUnionResponse"
+			class="com.pay10.pg.action.service.CityUnionBankResponseAction">
+			<result name="surchargePaymentPage" type="redirectAction">
+				<param name="actionName">surchargelocale</param>
+				<param name="request_localeA">${defaultLanguage}</param>
+				<param name="defaultLanguageA">${defaultLanguage}</param>
+			</result>
+		</action>
+		
+		<!-- ICICI Response Processor -->
+		<action name="icici3ds" class="com.pay10.pg.action.IciciResponseAction">
+			<result name="surchargePaymentPage" type="redirectAction">
+			  <param name="actionName">surchargelocale</param>	
+			  <param name="request_localeA">${defaultLanguage}</param>
+			  <param name="defaultLanguageA">${defaultLanguage}</param>	 		
+			</result>
+		</action>
+		<!-- ICICI Response Processor -->
+		
+		<!-- YESBANK Response Processor -->
+		<action name="yesBank3ds" class="com.pay10.pg.action.CSourceResponseAction">
+			<result name="surchargePaymentPage" type="redirectAction">
+			  <param name="actionName">surchargelocale</param>	
+			  <param name="request_localeA">${defaultLanguage}</param>
+			  <param name="defaultLanguageA">${defaultLanguage}</param>	 		
+			</result>
+		</action>
+		<!-- YESBANK Response Processor -->
+		
+		<!-- ICICI MPGS Response Processor -->
+		<action name="iciciMpgs3ds" class="com.pay10.pg.action.IciciMpgsResponseAction">
+			<result name="surchargePaymentPage" type="redirectAction">
+			  <param name="actionName">surchargelocale</param>	
+			  <param name="request_localeA">${defaultLanguage}</param>
+			  <param name="defaultLanguageA">${defaultLanguage}</param>	 		
+			</result>
+		</action>
+		<!-- ICICI MPGS Response Processor -->
+		
+		<!-- FERDERAL Response Processor -->
+		<action name="federalMPIResponse" class="com.pay10.pg.action.FederalResponseAction">
+			<result name="surchargePaymentPage" type="redirectAction">
+			  <param name="actionName">surchargelocale</param>	
+			  <param name="request_localeA">${defaultLanguage}</param>
+			  <param name="defaultLanguageA">${defaultLanguage}</param>	 		
+			</result>
+		</action>
+		<!-- FERDERAL Response Processor -->
+		
+		<!-- BOB Response Processor -->
+		<action name="bobResponse" class="com.pay10.pg.action.BobResponseAction">
+			<result name="surchargePaymentPage" type="redirectAction">
+			  <param name="actionName">surchargelocale</param>	
+			  <param name="request_localeA">${defaultLanguage}</param>
+			  <param name="defaultLanguageA">${defaultLanguage}</param>	 		
+			</result>
+		</action>
+		<!-- BOB Response Processor -->
+
+		<!-- FREECHARGE Response Processor -->
+		<action name="freeChargeUpiResponse" class="com.pay10.pg.action.FreeChargeResponseAction">
+			<result name="surchargePaymentPage" type="redirectAction">
+			  <param name="actionName">surchargelocale</param>	
+			  <param name="request_localeA">${defaultLanguage}</param>
+			  <param name="defaultLanguageA">${defaultLanguage}</param>	 		
+			</result>
+		</action>
+		<!-- FREECHARGE Response Processor -->
+		
+		<!-- ATOM Response Processor -->
+		<action name="atomResponse" class="com.pay10.pg.action.AtomResponseAction">
+			<result name="surchargePaymentPage" type="redirectAction">
+			  <param name="actionName">surchargelocale</param>	
+			  <param name="request_localeA">${defaultLanguage}</param>
+			  <param name="defaultLanguageA">${defaultLanguage}</param>	 		
+			</result>
+		</action>
+		<!-- ATOM Response Processor -->
+		
+		<!-- Quomo Response Processor -->
+		<action name="quomoResponse" class="com.pay10.pg.action.QuomoResponseAction">
+			<result name="surchargePaymentPage" type="redirectAction">
+			  <param name="actionName">surchargelocale</param>	
+			  <param name="request_localeA">${defaultLanguage}</param>
+			  <param name="defaultLanguageA">${defaultLanguage}</param>	 		
+			</result>
+		</action>
+		
+		<action name="quomoNotificationResponse" class="com.pay10.pg.action.QuomoNotificationResponseAction">
+			<result name="surchargePaymentPage" type="redirectAction">
+			  <param name="actionName">surchargelocale</param>	
+			  <param name="request_localeA">${defaultLanguage}</param>
+			  <param name="defaultLanguageA">${defaultLanguage}</param>	 		
+			</result>
+		</action>
+		<!-- Quomo Response Processor -->
+		
+		<!-- APBL Response Processor -->
+		<action name="apblResponse" class="com.pay10.pg.action.ApblResponseAction">
+			<result name="paymentPage">paymentPage.jsp</result>
+		</action>
+		<!-- APBL Response Processor -->
+		
+		
+		<!-- Mobikwik Response Processor -->
+		<action name="mobikwikResponse" class="com.pay10.pg.action.MobikwikResponseAction">
+			<result name="paymentPage">paymentPage.jsp</result>
+		</action>
+		<!-- Mobikwik Response Processor -->
+		
+		
+		<!-- FSS Response Processor -->
+		<action name="fssResponse" class="com.pay10.pg.action.FssResponseAction">
+			<result name="surchargePaymentPage" type="redirectAction">
+			  <param name="actionName">surchargelocale</param>	
+			  <param name="request_localeA">${defaultLanguage}</param>
+			  <param name="defaultLanguageA">${defaultLanguage}</param>	 		
+			</result>
+		</action>
+		<!-- FSS Response Processor -->
+		
+		<!-- SBI Response Processor -->
+		<action name="sbiResponse"
+			class="com.pay10.pg.action.SbiResponseAction">
+			<result name="paymentPage">surchargePaymentPage.jsp</result>
+		</action>
+		<!-- SBI Response Processor -->
+		
+		<action name="shivalikResponse"
+			class="com.pay10.pg.action.ShivaliknbResponseAction">
+			<result name="paymentPage">surchargePaymentPage.jsp</result>
+		</action>
+		
+		<!-- KOTAK Response Processor -->
+		<action name="kotakResponse" class="com.pay10.pg.action.KotakResponseAction">
+			<result name="surchargePaymentPage" type="redirectAction">
+			  <param name="actionName">surchargelocale</param>	
+			  <param name="request_localeA">${defaultLanguage}</param>
+			  <param name="defaultLanguageA">${defaultLanguage}</param>	 		
+			</result>
+		</action>
+		<action name="kotakResponseCard" class="com.pay10.pg.action.KotakResponseCardAction">
+			<result name="surchargePaymentPage" type="redirectAction">
+			  <param name="actionName">surchargelocale</param>	
+			  <param name="request_localeA">${defaultLanguage}</param>
+			  <param name="defaultLanguageA">${defaultLanguage}</param>	 		
+			</result>
+		</action>
+		<action name="kotakOtpPage" class="com.pay10.pg.action.KotakOptAction">
+			<interceptor-ref name="defaultStack" />
+			<result name="OptPage">kotakOtpPage.jsp</result>
+			<result name="invalidRequest">kotakOtpPage.jsp</result>
+		</action>
+		<!-- KOTAK Response Processor -->
+		<action name="SBIRUPAYResponsAction" class="com.pay10.pg.action.SbiRupayCardAction">
+			<result name="surchargePaymentPage" type="redirectAction">
+			  <param name="actionName">surchargelocale</param>	
+			  <param name="request_localeA">${defaultLanguage}</param>
+			  <param name="defaultLanguageA">${defaultLanguage}</param>	 		
+			</result>
+		</action>
+		
+		<action name="SBIOtpPage" class="com.pay10.pg.action.KotakOptAction">
+			<interceptor-ref name="defaultStack" />
+			<result name="OptPage">sbiOtpPage.jsp</result>
+			<result name="invalidRequest">sbiOtpPage.jsp</result>
+		</action>
+		<!-- KOTAK NB Response Processor -->
+		<action name="kotakResponset" class="com.pay10.pg.action.KotakNBResponseAction">
+			<result name="surchargePaymentPage" type="redirectAction">
+			  <param name="actionName">surchargelocale</param>	
+			  <param name="request_localeA">${defaultLanguage}</param>
+			  <param name="defaultLanguageA">${defaultLanguage}</param>	 		
+			</result>
+		</action>
+		<!-- KOTAK NB Response Processor -->
+		
+			<!-- KOTAKUPI Response Processor -->
+		<action name="kotakUpiResponse" class="com.pay10.pg.action.KotakUpiResponseAction">
+			<result name="paymentPage">paymentPage.jsp</result>
+		</action>
+		<!-- KOTAKUPI Response Processor -->
+		
+			<!-- IDFCUPI Response Processor -->
+		<action name="idfcBankUpiResponse" class="com.pay10.pg.action.IdfcUpiResponseAction">
+		<result name="success" type="json">
+			 <param name="noCache">true</param>
+   			 <param name="root">acknowledgementReq</param>
+        </result>
+		<result name="paymentPage">paymentPage.jsp</result>
+		</action>
+		<!-- IDFCUPI Response Processor -->
+		
+		<!-- LYRA Response Processor -->
+		<action name="lyraResponse"
+			class="com.pay10.pg.action.LyraResponseAction">
+			<result name="paymentPage">surchargePaymentPage.jsp</result>
+		</action>
+		<!-- LYRA Response Processor -->
+
+		<!-- LYRA NB Response Processor -->
+		<action name="lyraNBResponse"
+			class="com.pay10.pg.action.LyraNBResponseAction">
+			<result name="paymentPage">surchargePaymentPage.jsp</result>
+		</action>
+		<!-- ICICI NB Response Processor -->
+		
+		<!-- ICICI NB Response Processor -->
+		<action name="iciciNBResponse"
+			class="com.pay10.pg.action.IciciNBResponseAction">
+			<result name="paymentPage">surchargePaymentPage.jsp</result>
+		</action>
+		<!-- LYRA NB Response Processor -->
+
+		<!-- LYRA UPI Response Processor -->
+		<action name="lyraUpiResponse"
+			class="com.pay10.pg.action.LyraUpiResponseAction">
+			<result name="paymentPage">surchargePaymentPage.jsp</result>
+		</action>
+		<!-- LYRA UPI Response Processor -->
+
+		<!-- LYRA UPI CallBack Response Processor -->
+		<action name="lyraUpiCallbackResponse"
+			class="com.pay10.pg.action.LyraUpiServerResponseAction">
+			<result name="paymentPage">surchargePaymentPage.jsp</result>
+		</action>
+		<!-- LYRA UPI CallBack Response Processor -->
+		
+		
+		<!-- ATL Response Processor -->
+		<action name="atlResponse" class="com.pay10.pg.action.AtlResponseAction">
+			<result name="paymentPage">paymentPage.jsp</result>
+		</action>
+		<!-- ATL Response Processor -->
+		
+		<!-- FERDERAL UPI Response Processor -->
+		<action name="fedUPIResponse" class="com.pay10.pg.action.FedUpiResponseAction">
+<!-- 			<interceptor-ref name="json" />
+ -->			<result name="paymentPage">paymentPage.jsp</result>
+		</action>
+		<!-- FERDERAL Response Processor -->
+		
+		<!-- FERDERAL UPI Response Processor -->
+		<action name="fedUPIRefundResponse" class="com.pay10.pg.action.FedUpiRefundResponseAction">
+<!-- 			<interceptor-ref name="json" />
+ -->			<result name="paymentPage">paymentPage.jsp</result>
+		</action>
+		<!-- FERDERAL Response Processor -->
+		
+		<!-- HDFC UPI Response Processor -->
+		<action name="hdfcUPIResponse" class="com.pay10.pg.action.HdfcUpiResponseAction">
+<!-- 			<interceptor-ref name="json" />
+ -->			<result name="paymentPage">paymentPage.jsp</result>
+		</action>
+		<!-- YESBANKCB Response Processor -->
+		<action name="yesbankupiResponse" class="com.pay10.pg.action.YesBankUpiResponseAction">
+<!-- 			<interceptor-ref name="json" />
+ -->			<result name="paymentPage">paymentPage.jsp</result>
+		</action>
+		
+		<!-- Sbi Upi Response Processor -->
+		<action name="sbiUPIResponse" class="com.pay10.pg.action.SBIUPIResponseAction">
+<!-- 			<interceptor-ref name="json" />
+ -->			<result name="paymentPage">paymentPage.jsp</result>
+		</action>
+		
+		
+		<!-- IciciBankUpi Response Processor -->
+		<action name="icicibankupiResponse" class="com.pay10.pg.action.IciciBankUpiResponse">
+			<result name="paymentPage">paymentPage.jsp</result>
+		</action>
+		<!-- IciciBankUpi Response Processor -->
+		
+		<!-- Paytm Response Processor -->
+		<action name="paytmResponse" class="com.pay10.pg.action.PaytmResponseAction">
+			<result name="paymentPage">paymentPage.jsp</result>
+		</action>
+		<!-- Paytm Response Processor -->
+		
+		
+		
+		<!-- PhonePe Response Processor -->
+		<action name="phonepeResponse" class="com.pay10.pg.action.PhonePeResponseAction">
+			<result name="paymentPage">paymentPage.jsp</result>
+		</action>
+		<!-- PhonePe Response Processor -->
+		
+		<!-- MobiKwik Response Processor -->
+		<action name="mobikwikresponse" class="com.pay10.pg.action.MobikwikResponseAction">
+			<result name="surchargePaymentPage" type="redirectAction">
+			  <param name="actionName">surchargelocale</param>	
+			  <param name="request_localeA">${defaultLanguage}</param>
+			  <param name="defaultLanguageA">${defaultLanguage}</param>	 		
+			</result>
+		</action>
+		<!-- MobiKwik Response Processor -->
+		
+		<!-- Ingenico Response Processor -->
+		<action name="ingenicoResponse" class="com.pay10.pg.action.IngenicoResponseAction">
+			<result name="surchargePaymentPage" type="redirectAction">
+			  <param name="actionName">surchargelocale</param>	
+			  <param name="request_localeA">${defaultLanguage}</param>
+			  <param name="defaultLanguageA">${defaultLanguage}</param>	 		
+			</result>
+		</action>
+		<!-- Ingenico Response Processor -->
+		
+		<!-- PAYTM Response Processor -->
+		<action name="paytmResponse" class="com.pay10.pg.action.PaytmResponseAction">
+			<result name="paymentPage">paymentPage.jsp</result>
+		</action>
+		<!-- PAYTM Response Processor -->
+		
+		<!-- PAYU Response Processor -->
+		<action name="payuResponse" class="com.pay10.pg.action.PayuResponseAction">
+			<result name="paymentPage">paymentPage.jsp</result>
+			
+		</action>
+		<!-- PAYU Response Processor -->
+		
+		
+		<!-- ISGPay Response Processor -->
+		<action name="isgPayResponse" class="com.pay10.pg.action.ISGPayResponseAction">
+			<result name="surchargePaymentPage" type="redirectAction">
+			  <param name="actionName">surchargelocale</param>	
+			  <param name="request_localeA">${defaultLanguage}</param>
+			  <param name="defaultLanguageA">${defaultLanguage}</param>	 		
+			</result>
+		</action>
+		
+		<!-- Amex Transaction Processor -->
+		<action name="migsresponse" class="com.pay10.pg.action.MigsResponseAction">
+			<result name="surchargePaymentPage" type="redirectAction">
+			  <param name="actionName">surchargelocale</param>	
+			  <param name="request_localeA">${defaultLanguage}</param>
+			  <param name="defaultLanguageA">${defaultLanguage}</param>	 		
+			</result>
+		</action>
+		<!-- Amex Transaction Processor -->
+		
+		<!-- Amex EzeeClick -->
+		<action name="ezeeresponse" class="com.pay10.pg.action.EzeeClickResponseAction">
+			<result name="paymentPage">paymentPage.jsp</result>
+		</action>
+		<!-- Amex EzeeClick -->
+		
+		<!-- Cancel By User -->
+		<action name="txncancel" class="com.pay10.pg.action.RequestAction" method="cancelByUser">
+			<result name="success">response.jsp</result>
+			<result name="error">response.jsp</result>
+		</action>
+		<!-- Cancel By User -->
+		
+		<!-- Direct NetBanking -->
+		<action name="yesbankauthresponse" class="com.pay10.pg.action.YesBankResponseAction">
+			<result name="surchargePaymentPage" type="redirectAction">
+			  <param name="actionName">surchargelocale</param>	
+			  <param name="request_localeA">${defaultLanguage}</param>
+			  <param name="defaultLanguageA">${defaultLanguage}</param>	 		
+			</result>
+		</action>
+
+		<!-- Yesbank Response Processor -->
+		<action name="yesbankNBResponse"
+			class="com.pay10.pg.action.YesbankNBResponseAction">
+			<result name="surchargePaymentPage" type="redirectAction">
+				<param name="actionName">surchargelocale</param>
+				<param name="request_localeA">${defaultLanguage}</param>
+				<param name="defaultLanguageA">${defaultLanguage}</param>
+			</result>
+		</action>
+		<!-- Yesbank Response Processor -->
+
+		<action name="kotakauthresponse" class="com.pay10.pg.action.KotakResponseAction">
+			<result name="surchargePaymentPage" type="redirectAction">
+			  <param name="actionName">surchargelocale</param>	
+			  <param name="request_localeA">${defaultLanguage}</param>
+			  <param name="defaultLanguageA">${defaultLanguage}</param>	 		
+			</result>
+		</action>
+		
+		<action name="cosmosResponseAction" class="com.pay10.pg.action.CosmosResponseAction">
+			<!-- 			<interceptor-ref name="json" />
+             -->			<result name="paymentPage">paymentPage.jsp</result>
+		</action>
+		<action name="iPayResponse" class="com.pay10.pg.action.IPayResponseAction">
+			<result name="paymentPage">paymentPage.jsp</result>
+		</action>
+		<!-- Direct NetBanking -->
+		
+		
+		
+		<!-- IDBI Response Processor -->
+		<action name="idbiResponse" class="com.pay10.pg.action.IdbiResponseAction">
+			<result name="surchargePaymentPage" type="redirectAction">
+			  <param name="actionName">surchargelocale</param>	
+			  <param name="request_localeA">${defaultLanguage}</param>
+			  <param name="defaultLanguageA">${defaultLanguage}</param>	 		
+			</result>
+		</action>
+		<!-- IDBI Response Processor -->
+		
+		
+		
+		<!-- Direcpay Response Processor -->
+		<action name="direcpayResponse" class="com.pay10.pg.action.DirecpayResponseAction">
+			<result name="surchargePaymentPage" type="redirectAction">
+			  <param name="actionName">surchargelocale</param>	
+			  <param name="request_localeA">${defaultLanguage}</param>
+			  <param name="defaultLanguageA">${defaultLanguage}</param>	 		
+			</result>
+		</action>
+		<!-- Direcpay Response Processor -->
+		<!--added by vijay-->
+		<!-- TMB NB Response Processor -->
+		<action name="TMBNBResponseAction"
+				class="com.pay10.pg.action.TMBNBResponseAction">
+			<result name="surchargePaymentPage" type="redirectAction">
+				<param name="actionName">surchargelocale</param>
+				<param name="request_localeA">${defaultLanguage}</param>
+				<param name="defaultLanguageA">${defaultLanguage}</param>
+			</result>
+		</action>
+		<!-- AxisBank Response Processor -->
+		<action name="axisBankResponse" class="com.pay10.pg.action.AxisBankResponseAction">
+			<result name="surchargePaymentPage" type="redirectAction">
+			  <param name="actionName">surchargelocale</param>	
+			  <param name="request_localeA">${defaultLanguage}</param>
+			  <param name="defaultLanguageA">${defaultLanguage}</param>	 		
+			</result>
+		</action>
+		<!--added by vijay-->
+		<!-- TMB NB Response Processor -->
+		<action name="TMBNBResponseAction"
+				class="com.pay10.pg.action.TMBNBResponseAction">
+			<result name="surchargePaymentPage" type="redirectAction">
+				<param name="actionName">surchargelocale</param>
+				<param name="request_localeA">${defaultLanguage}</param>
+				<param name="defaultLanguageA">${defaultLanguage}</param>
+			</result>
+		</action>
+		<!-- AxisBank Response Processor -->
+
+
+		<!-- AxisBank NB Response Processor -->
+		<action name="axisNBResponse" class="com.pay10.pg.action.AxisBankNBResponseAction">
+			<result name="surchargePaymentPage" type="redirectAction">
+			  <param name="actionName">surchargelocale</param>	
+			  <param name="request_localeA">${defaultLanguage}</param>
+			  <param name="defaultLanguageA">${defaultLanguage}</param>	 		
+			</result>
+		</action>
+		<!-- AxisBank NB Response Processor -->
+		
+		<!-- AxisBank UPI Response Processor -->
+		<action name="axisUpiResponse" class="com.pay10.pg.action.AxisBankUpiResponseAction">
+		<result name="paymentPage">paymentPage.jsp</result>
+		</action>
+		<!-- AxisBank UPI Response Processor -->
+		
+		<!-- MatchMove Response Processor -->
+		<action name="matchMoveResponse" class="com.pay10.pg.action.MatchMoveResponseAction">
+		<result name="paymentPage">paymentPage.jsp</result>
+		</action>
+		<!-- MatchMove Response Processor -->
+		
+		
+		<action name="locale" class="com.pay10.pg.action.LocaleAction">
+			<result name="success">paymentPage.jsp</result>
+		</action>
+		
+		<action name="surchargelocale" class="com.pay10.pg.action.LocaleAction">
+			<result name="success">surchargePaymentPage.jsp</result>
+		</action>
+		<action name="surchargelocaleIrctc" class="com.pay10.pg.action.LocaleAction">
+			<result name="success">irctcPaymentPage.jsp</result>
+		</action>
+		
+		<action name="surchargelocaleMobile" class="com.pay10.pg.action.LocaleAction">
+			<result name="success">surchargeMobilePaymentPage.jsp</result>
+		</action>
+		
+		<action name="intentlocale" class="com.pay10.pg.action.LocaleAction">
+			<result name="success">intentupi.jsp</result>
+		</action>
+	
+		<action name="binResolver" class="com.pay10.pg.action.BinResolverAction">
+		<result name="success" type="json"></result>
+			<result name="input" type="json">
+				<param name="root">fieldErrors</param>
+				<param name="wrapPrefix"><![CDATA[{ "Invalid request" : ]]></param>
+				<param name="wrapSuffix"><![CDATA[}]]></param>
+			</result>
+			<result name="error" type="json">
+				<param name="statusCode">500</param>
+			</result>
+		</action>
+		
+		<action name="upiPay" class="com.pay10.pg.action.UpiRequestAction" >
+		<result name="success" type="json"></result>
+			<result name="input" type="json">
+				<param name="root">fieldErrors</param>
+				<param name="wrapPrefix"><![CDATA[{ "Invalid request" : ]]></param>
+				<param name="wrapSuffix"><![CDATA[}]]></param>
+			</result>
+			<result name="error" type="json">
+				<param name="statusCode">500</param>
+			</result>
+		</action>
+		
+		<action name="VpaVerify" class="com.pay10.pg.action.VpaVerifyAction" >
+			<result name="success" type="json"></result>
+			<result name="input" type="json">
+				<param name="root">fieldErrors</param>
+				<param name="wrapPrefix"><![CDATA[{ "Invalid request" : ]]></param>
+				<param name="wrapSuffix"><![CDATA[}]]></param>
+			</result>
+			<result name="error" type="json">
+				<param name="statusCode">500</param>
+			</result>
+		</action>
+		
+		<action name="upiintentPay" class="com.pay10.pg.action.UpiIntentRequestAction" >
+		<result name="success" type="json"></result>
+			<result name="input" type="json">
+				<param name="root">fieldErrors</param>
+				<param name="wrapPrefix"><![CDATA[{ "Invalid request" : ]]></param>
+				<param name="wrapSuffix"><![CDATA[}]]></param>
+			</result>
+			<result name="error" type="json">
+				<param name="statusCode">500</param>
+			</result>
+		</action>
+		
+		
+		<action name="verifyUpiResponse" class="com.pay10.pg.action.SearchTransactionAction" >
+			<result name="success" type="json"></result>
+			<result name="input" type="json">
+				<param name="root">fieldErrors</param>
+				<param name="wrapPrefix"><![CDATA[{ "Invalid request" : ]]></param>
+				<param name="wrapSuffix"><![CDATA[}]]></param>
+			</result>
+			<result name="error" type="json">
+				<param name="statusCode">500</param>
+			</result>
+		</action>
+		
+		<!-- fOR Cashfree Upi Intent -->
+		<action name="verifyIntentUpiResponse" class="com.pay10.pg.action.SearchUpiIntentTransactionAction" >
+			<result name="success" type="json"></result>
+			<result name="input" type="json">
+				<param name="root">fieldErrors</param>
+				<param name="wrapPrefix"><![CDATA[{ "Invalid request" : ]]></param>
+				<param name="wrapSuffix"><![CDATA[}]]></param>
+			</result>
+			<result name="error" type="json">
+				<param name="statusCode">500</param>
+			</result>
+		</action>
+		<!-- fOR YesUpi status Enquiry -->
+		<action name="verifyYesUpiResponse" class="com.pay10.pg.action.SearchTransactionYesUpiAction" >
+			<result name="success" type="json"></result>
+			<result name="input" type="json">
+				<param name="root">fieldErrors</param>
+				<param name="wrapPrefix"><![CDATA[{ "Invalid request" : ]]></param>
+				<param name="wrapSuffix"><![CDATA[}]]></param>
+			</result>
+			<result name="error" type="json">
+				<param name="statusCode">500</param>
+			</result>
+		</action>
+		<!-- fOR GPAY status Enquiry -->
+		<action name="verifyUpiGpayResponse" class="com.pay10.pg.action.SearchTransactionGpayAction" >
+			<result name="success" type="json"></result>
+			<result name="input" type="json">
+				<param name="root">fieldErrors</param>
+				<param name="wrapPrefix"><![CDATA[{ "Invalid request" : ]]></param>
+				<param name="wrapSuffix"><![CDATA[}]]></param>
+			</result>
+			<result name="error" type="json">
+				<param name="statusCode">500</param>
+			</result>
+		</action>
+		
+		<action name="surchargeCalculator" class="com.pay10.pg.action.SurchargeCalculatorAction" >
+		<result name="success" type="json"></result>
+			<result name="input" type="json">
+				<param name="root">fieldErrors</param>
+				<param name="wrapPrefix"><![CDATA[{ "Invalid request" : ]]></param>
+				<param name="wrapSuffix"><![CDATA[}]]></param>
+			</result>
+			<result name="error" type="json">
+				<param name="statusCode">500</param>
+			</result>
+		</action>
+		
+		<action name="demoResponse"
+			class="com.pay10.pg.action.DemoResponseAction">
+			<result name="surchargePaymentPage" type="redirectAction">
+				<param name="actionName">surchargelocale</param>
+				<param name="request_localeA">${defaultLanguage}</param>
+				<param name="defaultLanguageA">${defaultLanguage}</param>
+			</result>
+		</action>
+		
+		
+		<!-- Invoice Action -->
+		<!-- Call: Via invoice link Purpose Show invoice details to user before payment -->
+		<action name="reviewInvoice" class="com.pay10.pg.action.InvoiceReviewAction">
+			<interceptor-ref name="defaultStack" />
+			<result name="single">invoicePay.jsp</result>
+			<result name="promotional">promotionalPay.jsp</result>
+			<result name="invalidRequest">invalidRequest.jsp</result>
+		</action>
+		<!-- Call: From invoicePay.jsp (reviewInvoice) Purpose: Take user to payment page ; Single Invoice only-->
+		<action name="payInvoice" class="com.pay10.pg.action.InvoicePayAction">
+			<interceptor-ref name="defaultStack" />
+			<result name="invalidRequest">invalidRequest.jsp</result>
+		</action>
+		
+		<!-- Invoice Action End -->
+		<!-- Call: From promotionalPay.jsp (reviewInvoice) Purpose: Take user to payment page ; Promotional Invoice only-->
+		<action name="payPromoInvoice" class="com.pay10.pg.action.PromotionalInvoicePayAction">
+			<interceptor-ref name="defaultStack" />
+			<result name="invalidRequest">invalidRequest.jsp</result>
+		</action>
+		
+		<!-- Invoice Action End -->
+		
+		<!-- Payment Link Action -->
+		<!-- Call: Via Payment link Purpose take the details of merchant before payment -->
+		<action name="merchantPaymentLink" class="com.pay10.pg.action.MerchantPaymentLinkAction">
+			<interceptor-ref name="defaultStack" />
+			<result name="paymentLink">paymentLink.jsp</result>
+			<result name="invalidRequest">invalidRequest.jsp</result>
+		</action>
+	
+		<!-- Payment Link Action End -->
+		<!-- Pinelabs Response Processor -->
+		<action name="pinelabsResponse"
+			class="com.pay10.pg.action.PinelabsResponseAction">
+			<result name="surchargePaymentPage" type="redirectAction">
+				<param name="actionName">surchargelocale</param>
+				<param name="request_localeA">${defaultLanguage}</param>
+				<param name="defaultLanguageA">${defaultLanguage}</param>
+			</result>
+		</action>
+		
+		<!-- BILLDESK Response Processor -->
+		<action name="billdeskResponse" class="com.pay10.pg.action.BilldeskResponseAction">
+			<result name="surchargePaymentPage" type="redirectAction">
+			  <param name="actionName">surchargelocale</param>	
+			  <param name="request_localeA">${defaultLanguage}</param>
+			  <param name="defaultLanguageA">${defaultLanguage}</param>	 		
+			</result>
+		</action>
+		<!-- BILLDESK Response Processor -->
+		
+		<!-- CASHFREE Response Processor -->
+		<action name="cashfreeResponse"
+			class="com.pay10.pg.action.CashfreeResponseAction">
+			<result name="surchargePaymentPage" type="redirectAction">
+				<param name="actionName">surchargelocale</param>
+				<param name="request_localeA">${defaultLanguage}</param>
+				<param name="defaultLanguageA">${defaultLanguage}</param>
+			</result>
+		</action>
+		<!-- CASHFREE Response Processor -->
+		
+		<action name="demoResponse"
+			class="com.pay10.pg.action.DemoResponseAction">
+			<result name="surchargePaymentPage" type="redirectAction">
+				<param name="actionName">surchargelocale</param>
+				<param name="request_localeA">${defaultLanguage}</param>
+				<param name="defaultLanguageA">${defaultLanguage}</param>
+			</result>
+		</action>
+		
+		
+		<!-- CASHFREE New Flow Response Processor -->
+		<action name="cashfreeWebhookResponse"
+			class="com.pay10.pg.action.CashfreeWebhookResponseAction">
+			<result name="surchargePaymentPage" type="redirectAction">
+				<param name="actionName">surchargelocale</param>
+				<param name="request_localeA">${defaultLanguage}</param>
+				<param name="defaultLanguageA">${defaultLanguage}</param>
+			</result>
+		</action>
+		<!-- CASHFREE New Flow Response Processor -->
+		
+		<!-- EASEBUZZ Response Processor -->
+		<action name="easebuzzResponse"
+			class="com.pay10.pg.action.EasebuzzResponseAction">
+			<result name="surchargePaymentPage" type="redirectAction">
+				<param name="actionName">surchargelocale</param>
+				<param name="request_localeA">${defaultLanguage}</param>
+				<param name="defaultLanguageA">${defaultLanguage}</param>
+			</result>
+		</action>	
+		<!-- EASEBUZZ Response Processor -->
+		
+		<!-- Agreepay Response Processor -->
+		<action name="agreepayResponse"
+			class="com.pay10.pg.action.AgreepayResponseAction">
+			<result name="surchargePaymentPage" type="redirectAction">
+				<param name="actionName">surchargelocale</param>
+				<param name="request_localeA">${defaultLanguage}</param>
+				<param name="defaultLanguageA">${defaultLanguage}</param>
+			</result>
+		</action>
+		
+		<!-- CAMSPAY Response Processor -->
+		<action name="camsPayResponse" class="com.pay10.pg.action.CamsPayResponseAction">
+			<result name="paymentPage">paymentPage.jsp</result>
+		</action>
+		<!-- CAMSPAY Response Processor -->
+		
+		<!-- Agreepay Response Processor -->
+		<!-- FederalBank NB Response Processor -->
+		<action name="federalBankNBResponse" class="com.pay10.pg.action.FederalBankNBResponseAction">
+			<result name="surchargePaymentPage" type="redirectAction">
+				<param name="actionName">surchargelocale</param>
+				<param name="request_localeA">${defaultLanguage}</param>
+				<param name="defaultLanguageA">${defaultLanguage}</param>
+			</result>
+		</action>
+		
+		
+		<!-- FederalBank NB Response Processor -->	
+		
+		<!-- Axis UPI Mandate Start-->
+		<action name="axisUpiMandate" class="com.pay10.pg.action.AxisUpiMandateAction">
+			<result name="success" type="json"></result>
+		</action>
+		<!-- Axis UPI Mandate End-->
+		
+		<!-- Payment Link Start-->
+		<action name="paymentLinkPay" class="com.pay10.pg.action.PaymentLinkPayAction">
+			<interceptor-ref name="defaultStack" />
+			<result name="invalidRequest">invalidRequest.jsp</result>
+			<result name="error">invalidRequest.jsp</result>
+		</action>
+		<!-- Payment Link End-->
+		
+		<!-- Payment Link Start-->
+		<action name="intentPaymentLinkPay" class="com.pay10.pg.action.IntentPaymentLinkPayAction">
+			<interceptor-ref name="defaultStack" />
+			<result name="invalidRequest">invalidRequest.jsp</result>
+			<result name="error">invalidRequest.jsp</result>
+		</action>
+		<!-- Payment Link End-->
+		
+		<!-- Payment Link Start-->
+		<action name="payinPaymentS2S" class="com.pay10.pg.action.PayinPaymentS2SAction">
+			<interceptor-ref name="defaultStack" />
+			<result name="invalidRequest">invalidRequest.jsp</result>
+			<result name="error">invalidRequest.jsp</result>
+		</action>
+		<!-- Payment Link End-->
+		
+		<!-- PGUI Uptime monitoring Service -->
+		<action name="healthCheck" class="com.pay10.pg.action.PguiUptimeService">
+			<result name="success" type="httpheader">
+        		<param name="error">200</param>
+    		</result>
+		</action>
+		
+		<action name="uptime" class="com.pay10.pg.action.PguiUptimeService" method="statusCake">
+			<result name="500" type="httpheader">
+        		<param name="error">500</param>
+    		</result>
+    		<result name="200" type="httpheader">
+        		<param name="error">200</param>
+    		</result>
+    		<result name="400" type="httpheader">
+        		<param name="error">400</param>
+    		</result>
+		</action>
+		<!-- Merchant Hosted Transaction Process -->
+		<action name="merchantPaymentInit" class="com.pay10.pg.action.MerchantHostedRequestAction">
+			<result name="redirecturl" type="redirect">${redirectUrl}</result>
+			<result name="invalidRequest">invalidRequest.jsp</result>
+			<result name="upiLoader">upiMerchantHosted.jsp</result>
+			<result name="success" type="json">
+			 <param name="includeProperties">ENCDATA,PAY_ID</param>
+       		<param name="alias.encData">ENCDATA</param>
+        	<param name="alias.payId">PAY_ID</param>
+			
+			</result>
+		</action>
+		<!-- Merchant Hosted Transaction Process -->
+		
+		<!-- Merchant Hosted Transaction Process -->
+		<action name="emitraPaymentInit" class="com.pay10.pg.action.EmitraHostedRequestAction">
+			<result name="paymentPage" type="redirectAction">
+			  <param name="actionName">locale</param>	
+			  <param name="request_locale">${defaultLanguage}</param>
+			  <param name="defaultLanguage">${defaultLanguage}</param>	 		
+			</result>
+			<result name="surchargePaymentPage" type="redirectAction">
+			  <param name="actionName">surchargelocale</param>	
+			  <param name="request_localeA">${defaultLanguage}</param>
+			  <param name="defaultLanguageA">${defaultLanguage}</param>	 		
+			</result>
+			<result name="surchargeMobilePaymentPage" type="redirectAction">
+			  <param name="actionName">surchargelocaleMobile</param>	
+			  <param name="request_localeA">${defaultLanguage}</param>
+			  <param name="defaultLanguageA">${defaultLanguage}</param>	 		
+			</result>
+			<result name="intentPage" type="redirectAction">
+			  <param name="actionName">intentlocale</param>	
+			  <param name="request_localeA">${defaultLanguage}</param>
+			  <param name="defaultLanguageA">${defaultLanguage}</param>	 		
+			</result>
+			<result name="invalidRequest">invalidRequest.jsp</result>
+			<result name="paymentPage">paymentPage.jsp</result>
+			
+		</action>
+		<!-- Merchant Hosted Transaction Process -->
+		
+		<!-- PGUI Uptime monitoring Service -->
+		
+		<action name="merchantS2SRequest" class="com.pay10.pg.action.MerchantHostedS2SRequestAction" >
+			<result name="success" type="json"></result>
+			<result name="input" type="json">
+				<param name="root">fieldErrors</param>
+				<param name="wrapPrefix"><![CDATA[{ "Invalid request" : ]]></param>
+				<param name="wrapSuffix"><![CDATA[}]]></param>
+			</result>
+			<result name="error" type="json">
+			</result>
+		</action>
+
+		<action name="sbicardsecureresp" class="com.pay10.pg.action.SbiSecureResponseAction">
+			<result name="paymentPage">paymentPage.jsp</result>
+			<result name="success">response.jsp</result>
+		</action>
+		
+	</package>
+</struts>

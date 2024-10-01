@@ -1,0 +1,38 @@
+body, html {
+	height: 100%;
+}
+.errorbox {
+	background: #ffffff;
+	border-radius: 5px;
+}
+.errorbox h3 {	
+	margin-bottom: 0px;
+}
+.errorbox p {
+	color: #767676;
+}
+.errorbox .bluebtn {
+	background: #1197eb;
+	color: #fff;
+}
+.errorbox .bluebtn:hover {
+	-webkit-transition: background-color 1s ease-out;
+	-moz-transition: background-color 1s ease-out;
+	-o-transition: background-color 1s ease-out;
+	transition: background-color 1s ease-out;
+	background: #0067a7;
+}
+.errorbox .grnbtn {
+	background: #01c851;
+	color: #fff;
+}
+.errorbox .grnbtn:hover {
+	-webkit-transition: background-color 1s ease-out;
+	-moz-transition: background-color 1s ease-out;
+	-o-transition: background-color 1s ease-out;
+	transition: background-color 1s ease-out;
+	background: #009b3e;
+}
+.clrblue {color: #1197eb;}
+.clrgrn {color: #01c851;}
+.oopstext { font-size:80px; font-weight:100;}

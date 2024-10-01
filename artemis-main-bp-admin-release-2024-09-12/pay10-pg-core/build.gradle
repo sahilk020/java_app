@@ -1,0 +1,63 @@
+buildscript {
+	ext {
+		springBootVersion = '2.1.8.RELEASE'
+	}
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+	}
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+
+jar {
+    baseName = 'pay10-pg-core'
+}
+
+bootJar {
+	    enabled = false
+	}
+	
+jar {
+	    enabled = true
+	}
+
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = 1.8
+
+repositories {
+	mavenCentral()
+}
+
+
+dependencies {
+	compile project(':pay10-commons')
+	compile project(':pay10-notification-txnpush')
+	compile('org.springframework.boot:spring-boot-starter-web')
+	testCompile('org.springframework.boot:spring-boot-starter-test')
+	compile group: 'org.hibernate', name: 'hibernate-core', version: '5.2.1.Final'
+    compile group: 'org.hibernate', name: 'hibernate-c3p0', version: '5.2.1.Final'
+    compile group: 'org.hibernate', name: 'hibernate-ehcache', version: '5.2.1.Final'
+    compile group: 'cryptix', name: 'cryptix', version: '3.2.0'
+    implementation group: 'org.apache.poi', name: 'poi', version: '4.1.2'
+    implementation group: 'org.apache.poi', name: 'poi-ooxml', version: '4.1.2'
+	implementation group: 'com.nimbusds', name: 'nimbus-jose-jwt', version: '9.28'
+	implementation group: 'org.projectlombok', name: 'lombok', version: '1.18.26'
+	compileOnly 'org.projectlombok:lombok:1.18.26'
+	annotationProcessor 'org.projectlombok:lombok:1.18.26'
+	implementation 'com.squareup.okhttp3:okhttp:3.14.5'
+	implementation group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib', version: '1.3.70'
+	testCompileOnly 'org.projectlombok:lombok:1.18.26'
+	testAnnotationProcessor 'org.projectlombok:lombok:1.18.26'
+}
+
+dependencies {
+	//implementation files("D:\\RR\\RS\\Pay10\\Pay10Final14Oct21\\external-jars\\iPayPipe.jar")
+	implementation fileTree(include: ['*.jar'], dir: 'libs')
+}
+

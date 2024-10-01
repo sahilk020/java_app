@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.5//EN"
+        "http://struts.apache.org/dtds/struts-2.5.dtd">
+        
+
+<struts>
+	<constant name="struts.enable.DynamicMethodInvocation" value="false" />
+	<constant name="struts.devMode" value="true" />
+	<constant name="struts.mapper.action.prefix.enabled" value="true" />
+	<constant name="struts.custom.i18n.resources" value="global" />
+
+
+	<package name="zeusmain" extends="struts-default,json-default"
+		namespace="/jsp">
+
+		<interceptors>
+
+			<!-- custom interceptors -->
+
+			<!-- edited by harpreet (StateSaveInterceptor) -->
+
+			<interceptor name="userLogin"
+				class="com.pay10.pg.ui.interceptor.SessionValidationIntercepter" />
+			<interceptor name="commonUserLogin"
+				class="com.pay10.pg.ui.interceptor.CommonSessionValidationIntercepter" />
+			<interceptor name="noCache"
+				class="com.pay10.pg.ui.interceptor.NoCacheInterceptor" />
+			<interceptor name="commonValidator"
+				class="com.pay10.pg.ui.interceptor.CommonValidationInterceptor" />
+			<interceptor name="customToken"
+				class="com.pay10.pg.ui.interceptor.TokenValidationInterceptor" />
+			<interceptor name="httpMethod"
+				class="com.pay10.pg.ui.interceptor.HTTPMethodFilterInterceptor" />
+
+			<!-- custom interceptors -->
+			<interceptor-stack name="default">
+				<interceptor-ref name="commonValidator" />
+				<interceptor-ref name="defaultStack" />
+			</interceptor-stack>
+
+			<interceptor-stack name="mmadDefault">
+				<interceptor-ref name="userLogin">
+					<param name="exception.logEnabled">false</param>
+					<param name="params.excludeParams">^struts\..*,parameters\...*</param>
+				</interceptor-ref>
+				<interceptor-ref name="noCache" />
+				<interceptor-ref name="default" />
+			</interceptor-stack>
+
+			<interceptor-stack name="mmadDefaultToken">
+				<interceptor-ref name="httpMethod" />
+				<interceptor-ref name="mmadDefault" />
+				<interceptor-ref name="customToken" />
+			</interceptor-stack>
+
+			<interceptor-stack name="mmadNewUser">
+				<interceptor-ref name="commonUserLogin">
+					<param name="exception.logEnabled">false</param>
+					<param name="params.excludeParams">^struts\..*,parameters\...*</param>
+				</interceptor-ref>
+				<interceptor-ref name="noCache" />
+				<interceptor-ref name="default" />
+			</interceptor-stack>
+
+			<interceptor-stack name="mmadNewUserToken">
+				<interceptor-ref name="httpMethod" />
+				<interceptor-ref name="customToken">
+					<param name="excludeMethods">authoriseUser</param>
+				</interceptor-ref>
+				<interceptor-ref name="mmadNewUser" />
+			</interceptor-stack>
+
+			<interceptor-stack name="mmadToken">
+				<interceptor-ref name="httpMethod" />
+				<interceptor-ref name="default" />
+				<interceptor-ref name="commonValidator" />
+				<interceptor-ref name="tokenSession">
+					<param name="includeMethods">*</param>
+				</interceptor-ref>
+				<interceptor-ref name="noCache" />
+			</interceptor-stack>
+
+			<interceptor-stack name="mmadSuperAdminDefault">
+				<interceptor-ref name="noCache" />
+				<interceptor-ref name="default" />
+			</interceptor-stack>
+
+			<interceptor-stack name="mmadAdminDefault">
+				<interceptor-ref name="noCache" />
+				<interceptor-ref name="default" />
+			</interceptor-stack>
+
+
+			<interceptor-stack name="mmadSuperAdminDefaultToken">
+				<interceptor-ref name="httpMethod" />
+				<interceptor-ref name="customToken" />
+				<interceptor-ref name="mmadSuperAdminDefault" />
+			</interceptor-stack>
+
+			<interceptor-stack name="mmadAdminDefaultToken">
+				<interceptor-ref name="httpMethod" />
+				<interceptor-ref name="customToken" />
+				<interceptor-ref name="mmadAdminDefault" />
+			</interceptor-stack>
+
+			<!-- authentication interceptor-stacks for reseller module -->
+			<interceptor-stack name="mmadResellerDefault">
+				<!-- <interceptor-ref name="resellerAuthorizer">
+					<param name="exception.logEnabled">false</param>
+					<param name="params.excludeParams">^struts\..*,parameters\...*</param>
+				</interceptor-ref> -->
+				<interceptor-ref name="noCache" />
+				<interceptor-ref name="default" />
+			</interceptor-stack>
+
+			<interceptor-stack name="mmadResellerDefaultToken">
+				<interceptor-ref name="httpMethod" />
+				<interceptor-ref name="customToken" />
+				<interceptor-ref name="mmadResellerDefault" />
+			</interceptor-stack>
+
+		</interceptors>
+	</package>
+
+	<include file="struts-pg.xml"></include>
+
+</struts>

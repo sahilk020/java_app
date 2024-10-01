@@ -1,0 +1,45 @@
+paymentgateway.demo:
+  ############################# URL Start ###############################
+  statusEnquiryApiUrl: http://127.0.0.1:8083/pgws/enquiry/process
+  refundApiUrl: http://127.0.0.1:8083/pgws/enquiry/internalRefund
+  chargebackApiUrl: "http://uat.pay10.com/crmws/ChargebackMail/ChargebackBulkMail"
+  #############################  URL End ################################
+  ############################  MONGO_DB  ###############################
+  MONGO_DB_host: 127.0.0.1
+  MONGO_DB_port: 27017
+  MONGO_DB_dbName: clsolive
+  MONGO_DB_mongoURIprefix: "mongodb://"
+  MONGO_DB_mongoURIsuffix: "@localhost:27017/pay10?maxPoolSize=100&minPoolSize=10&authenticationDatabase=pay10"
+  MONGO_DB_username: root
+  MONGO_DB_password: 'WItItfgqkfEjtGvr1xolZQ=='
+  MONGO_DB_collectionName: transaction
+  MONGO_DB_schedulerLogsCollection: schedulerLogs
+
+  ########################################################################
+  
+    ################### Transaction Status Enquiry Start ################
+  transactionStatusEnquiry: 1
+  acquirerName: YESBANKCB,ATOM,FREECHARGE,PAYU
+  transactionBankStatusEnquiryCron: 0 0/1 * 1/1 * ? *
+  merchantPayId: ALL
+  minutesBefore: 1
+  minutesInterval: 100
+  salePayoutUrl: http://localhost:8080/pgws//payout/transact
+  minutesBeforePayout: 1
+  minutesIntervalPayout: "200"
+  MONGO_DB_dbName: pay10
+  enquiryApiUrl: http://127.0.0.1:8083/pgws/enquiry/process
+  ################### Transaction Status Enquiry End ################
+  
+  
+server:
+  port: 8092
+  servlet:
+    context-path: /schedular
+ 
+spring:
+  datasource:
+    driver-class-name: "com.mysql.jdbc.Driver"
+    username: "root"
+    url: "jdbc:mysql://localhost:3306/pay10?autoReconnect=true&amp;useSSL=false"
+    password: "123456"

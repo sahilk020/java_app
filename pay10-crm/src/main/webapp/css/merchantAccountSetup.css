@@ -1,0 +1,38 @@
+@charset "ISO-8859-1";
+
+#HeadUploadedDocumentsDiv, #UploadedDocumentsDiv{
+/* 	display: none;	 */
+}
+
+#merchantDocumentsDiv{
+	text-align: left;
+    padding: 15px;
+}
+
+.uploadDocsTables {
+	width: 100%;
+	height: inherit;
+	display: none;
+}
+
+.showTables{
+	display: block !important;
+}
+
+.uploadDocTableTd {
+    width: 60%;
+    border: 1px solid;
+    height: 40px;
+    padding: 10px;
+}
+
+.uploadDocTableTd a {
+    float: right;
+    font-size: 25px;
+    width: 5%;
+}
+
+.uploadDocTableTd input[readonly] {
+    background: transparent !important;
+    width: 90%;
+}

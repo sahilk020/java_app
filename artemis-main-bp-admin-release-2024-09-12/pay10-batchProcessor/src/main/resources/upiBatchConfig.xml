@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:batch="http://www.springframework.org/schema/batch" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/batch 
+		http://www.springframework.org/schema/batch/spring-batch.xsd
+		http://www.springframework.org/schema/context 
+		http://www.springframework.org/schema/context/spring-context.xsd">
+
+	<!-- <bean id="upiMultiThreaded"
+		class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
+		<property name="corePoolSize" value="${thread.size.corePool:10}" />
+	</bean> -->
+
+	<bean id="transactionManager"
+		class="org.springframework.batch.support.transaction.ResourcelessTransactionManager" />
+
+	<bean id="jobRepository"
+		class="org.springframework.batch.core.repository.support.MapJobRepositoryFactoryBean">
+		<property name="transactionManager" ref="transactionManager" />
+	</bean>
+
+	<bean id="upiJobLauncher"
+		class="org.springframework.batch.core.launch.support.SimpleJobLauncher">
+		<property name="jobRepository" ref="jobRepository" />
+		<!-- <property name="taskExecutor" ref="upiMultiThreaded" /> -->
+	</bean>
+
+	<bean id="upiReaderListener" class="com.pay10.batch.commons.FileItemReaderListener" />
+
+	<bean id="upiProcessorListener" class="com.pay10.batch.commons.FileItemProcessorListener" />
+
+	<batch:job id="upiBatchJob">
+		<batch:step id="upiBatchStep">
+			<batch:tasklet>
+				<batch:chunk reader="${upiSettle.file.itemReader:upiSettleFlatFileItemReader}" writer="upiItemWriter"
+					processor="upiItemProcessor" commit-interval="${upiSettle.file.linesCommit:1}" 
+						skip-limit="${exception.limit.ignore:15}" retry-limit="${exception.limit.retry:3}">
+					<batch:skippable-exception-classes>
+						<batch:include class="org.springframework.batch.item.file.FlatFileParseException" />
+						<batch:include class="org.springframework.batch.item.ItemReaderException" />
+						<batch:include class="java.lang.IllegalStateException" />
+						<batch:include class="com.pay10.batch.exception.SystemException" />
+						<batch:include class="com.pay10.batch.exception.DatabaseException" />
+					</batch:skippable-exception-classes>
+					<batch:retryable-exception-classes>
+					    <batch:include class="com.pay10.batch.exception.DatabaseException" />
+					</batch:retryable-exception-classes>
+					
+					<batch:listeners>
+						<batch:listener ref="upiReaderListener" />
+						<batch:listener ref="upiProcessorListener" />
+					</batch:listeners>
+				</batch:chunk>
+			</batch:tasklet>
+			<batch:next on="COMPLETED" to="upiSuccessFlowStep" />
+			<batch:next on="FAILED" to="upiFailureFlowStep" />
+		</batch:step>
+		<batch:step id="upiSuccessFlowStep">
+			<batch:tasklet ref="upiSuccessTask">
+			</batch:tasklet>
+		</batch:step>
+		<batch:step id="upiFailureFlowStep">
+			<batch:tasklet ref="upiFailureTask">
+			</batch:tasklet>
+		</batch:step>
+	</batch:job>
+
+	<bean id="upiSettleFlatFileItemReader" class="org.springframework.batch.item.file.FlatFileItemReader"
+		scope="step">
+		<property name="resource" value="file:///#{jobParameters['input.file.name']}" />
+		<property name="linesToSkip" value="${upiSettle.file.skipLines:1}" />
+		<property name= "encoding" value ="UTF-8"/>
+		<property name="lineMapper">
+			<bean class="com.pay10.batch.commons.FileLineMapper">
+			    <property name="fileParameter" value="${upiSettleFileParameters}"/>
+				<property name="lineTokenizer">
+					<bean
+						class="org.springframework.batch.item.file.transform.DelimitedLineTokenizer">
+						<property name="delimiter" value="${upiSettle.file.splitter:|}" />
+						<property name="strict" value="true" />
+						<property name="names" value="${upiSettleFileParameters}" />
+					</bean>
+				</property>
+				<property name="fieldSetMapper">
+					<bean class="org.springframework.batch.item.file.mapping.PassThroughFieldSetMapper" />
+				</property>
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="upiItemProcessor" class="com.pay10.batch.recoSettle.UpiSettleRecoBatchProcessor" scope="prototype">
+		<property name="fileValidator" ref="upiFileValidator" />
+	</bean>
+
+	<bean id="upiItemWriter" class="com.pay10.batch.MongoDbWriter" />
+	
+	<bean id="upiFileValidator" class="com.pay10.batch.recoSettle.UpiSettleRecoFileValidator" />
+
+	<bean id="upiSuccessTask" class="com.pay10.batch.commons.SuccessTaskExecutor">
+		<property name="successDrive" value="${directory.path.success}" />
+		<property name="fileLocker" ref="upiFileLocker" />
+	</bean>
+	<bean id="upiFailureTask" class="com.pay10.batch.commons.FailureTaskExecutor">
+		<property name="errorDrive" value="${directory.path.error}" />
+		<property name="fileLocker" ref="upiFileLocker" />
+	</bean>
+
+</beans>

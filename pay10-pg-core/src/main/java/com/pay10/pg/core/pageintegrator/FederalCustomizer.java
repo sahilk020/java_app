@@ -1,0 +1,58 @@
+package com.pay10.pg.core.pageintegrator;
+
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.opensymphony.xwork2.Action;
+import com.pay10.commons.exception.ErrorType;
+import com.pay10.commons.util.FieldType;
+import com.pay10.commons.util.Fields;
+import com.pay10.commons.util.StatusType;
+import com.pay10.pg.core.util.RequestCreator;
+import com.pay10.pg.core.util.ResponseCreator;
+
+/**
+ * @author Rahul
+ *
+ */
+@Service
+public class FederalCustomizer implements Customizer {
+	private static Logger logger = LoggerFactory.getLogger(FederalCustomizer.class.getName()); 
+	
+	@Autowired
+	private RequestCreator requestCreator;
+	
+	@Autowired
+	private ResponseCreator responseCreator;
+	
+	@Override
+	public String integrate(Fields fields) {
+		fields.logAllFields("All Response fields Recieved");
+
+		String responseCode = fields.get(FieldType.RESPONSE_CODE.getName());
+		logger.info("FederalCustomizer Response" +   responseCode);
+
+		if (fields.get(FieldType.STATUS.getName()) == StatusType.ENROLLED.getName()) {
+		//	requestCreator.EnrollRequest(fields);						
+		//	return Action.NONE;
+		}
+
+		if (null == responseCode || !responseCode.equals(ErrorType.SUCCESS.getCode())) {			
+		//	requestCreator.InvalidRequest(fields);
+		//	return Action.NONE;
+		}
+		else{
+		//	EmailBuilder emailBuilder = new EmailBuilder();  TODO
+			try {
+		//		emailBuilder.transactionEmailer(fields,UserType.MERCHANT.toString());
+			} catch (Exception exception) {
+				logger.error("Exception", exception);
+			}
+			
+			responseCreator.ResponsePost(fields);
+		}
+		return Action.NONE;
+	}
+}
+

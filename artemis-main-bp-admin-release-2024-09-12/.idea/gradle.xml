@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="GradleMigrationSettings" migrationVersion="1" />
+  <component name="GradleSettings">
+    <option name="linkedExternalProjectsSettings">
+      <GradleProjectSettings>
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="gradleJvm" value="#JAVA_HOME" />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/pay10-batchProcessor" />
+            <option value="$PROJECT_DIR$/pay10-bindb" />
+            <option value="$PROJECT_DIR$/pay10-commons" />
+            <option value="$PROJECT_DIR$/pay10-crm" />
+            <option value="$PROJECT_DIR$/pay10-crm-ws" />
+            <option value="$PROJECT_DIR$/pay10-crypto" />
+            <option value="$PROJECT_DIR$/pay10-notification-email" />
+            <option value="$PROJECT_DIR$/pay10-notification-sms" />
+            <option value="$PROJECT_DIR$/pay10-notification-txnpush" />
+            <option value="$PROJECT_DIR$/pay10-pg-core" />
+            <option value="$PROJECT_DIR$/pay10-pg-ui" />
+            <option value="$PROJECT_DIR$/pay10-pg-ws" />
+            <option value="$PROJECT_DIR$/pay10-schedular" />
+            <option value="$PROJECT_DIR$/pay10-webhook" />
+            <option value="$PROJECT_DIR$/payout" />
+          </set>
+        </option>
+      </GradleProjectSettings>
+    </option>
+  </component>
+</project>

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:batch="http://www.springframework.org/schema/batch" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/batch 
+		http://www.springframework.org/schema/batch/spring-batch.xsd
+		http://www.springframework.org/schema/context 
+		http://www.springframework.org/schema/context/spring-context.xsd">
+
+	<bean id="refundMultiThreaded"
+		class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
+		<property name="corePoolSize" value="${thread.size.corePool:10}" />
+	</bean>
+	
+	<bean id="refundJobLauncher"
+		class="org.springframework.batch.core.launch.support.SimpleJobLauncher">
+		<property name="jobRepository" ref="jobRepository" />
+		<property name="taskExecutor" ref="refundMultiThreaded" />
+	</bean>
+	
+	<bean id="refundReaderListener" class="com.pay10.batch.commons.FileItemReaderListener" />
+
+	<bean id="refundProcessorListener" class="com.pay10.batch.commons.FileItemProcessorListener" />
+
+	<batch:job id="refundBatchJob">
+		<batch:step id="refundBatchStep">
+			<batch:tasklet>
+				<batch:chunk reader="${refund.file.itemReader:refundFlatFileItemReader}" writer="refundItemWriter"
+					processor="refundItemProcessor" commit-interval="${refund.file.linesCommit:1}" 
+						skip-limit="${exception.limit.ignore:15}" retry-limit="${exception.limit.retry:3}">
+					<batch:skippable-exception-classes>
+						<batch:include class="org.springframework.batch.item.file.FlatFileParseException" />
+						<batch:include class="org.springframework.batch.item.ItemReaderException" />
+						<batch:include class="java.lang.IllegalStateException" />
+						<batch:include class="com.pay10.batch.exception.SystemException" />
+						<batch:include class="com.pay10.batch.exception.DatabaseException" />
+					</batch:skippable-exception-classes>
+					<batch:retryable-exception-classes>
+					    <batch:include class="com.pay10.batch.exception.DatabaseException" />
+					</batch:retryable-exception-classes>
+					
+					<batch:listeners>
+						<batch:listener ref="refundReaderListener" />
+						<batch:listener ref="refundProcessorListener" />
+					</batch:listeners>
+				</batch:chunk>
+			</batch:tasklet>
+			<batch:next on="COMPLETED" to="refundSuccessFlowStep" />
+			<batch:next on="FAILED" to="refundFailureFlowStep" />
+		</batch:step>
+		<batch:step id="refundSuccessFlowStep">
+			<batch:tasklet ref="refundSuccessTask">
+			</batch:tasklet>
+		</batch:step>
+		<batch:step id="refundFailureFlowStep">
+			<batch:tasklet ref="refundFailureTask">
+			</batch:tasklet>
+		</batch:step>
+	</batch:job>
+
+	<bean id="refundFlatFileItemReader" class="org.springframework.batch.item.file.FlatFileItemReader"
+		scope="step">
+		<property name="resource" value="file:///#{jobParameters['input.file.name']}" />
+		<property name="linesToSkip" value="${refund.file.skipLines:0}" />
+		<property name= "encoding" value ="UTF-8"/>
+		<property name="lineMapper">
+			<bean class="com.pay10.batch.commons.FileLineMapper">
+			    <property name="fileParameter" value="${refundFileParameters}"/>
+				<property name="lineTokenizer">
+					<bean
+						class="org.springframework.batch.item.file.transform.DelimitedLineTokenizer">
+						<property name="delimiter" value="${refund.file.splitter:|}" />
+						<property name="strict" value="true" />
+						<property name="names" value="${refundFileParameters}" />
+					</bean>
+				</property>
+				<property name="fieldSetMapper">
+					<bean class="org.springframework.batch.item.file.mapping.PassThroughFieldSetMapper" />
+				</property>
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="refundItemProcessor" class="com.pay10.batch.refund.RefundBatchProcessor" scope="prototype">
+		<property name="fileValidator" ref="refundFileValidator" />
+	</bean>
+
+	<bean id="refundItemWriter" class="com.pay10.batch.MongoDbWriter" />
+	
+	<bean id="refundFileValidator" class="com.pay10.batch.refund.RefundFileValidator" />
+	
+	<bean id="refundSuccessTask" class="com.pay10.batch.commons.SuccessTaskExecutor">
+		<property name="successDrive" value="${directory.path.success}" />
+		<property name="fileLocker" ref="refundFileLocker" />
+	</bean>
+	<bean id="refundFailureTask" class="com.pay10.batch.commons.FailureTaskExecutor">
+		<property name="errorDrive" value="${directory.path.error}" />
+		<property name="fileLocker" ref="refundFileLocker" />
+	</bean>
+
+</beans>

@@ -1,0 +1,500 @@
+# ------- YAML Configuration file for RECO -------
+
+# Local file path to read file and write file to success/error folders
+directory:
+      path:
+         recoRead: D:/RR/RS/Pay10/recon_sftp/recoInput
+         refundRead: D:/RR/RS/Pay10/recon_sftp/recoInput
+         success: D:/RR/RS/Pay10/recon_sftp/recoSuccess
+         error: D:/RR/RS/Pay10/recon_sftp/recoError
+
+# Properties used while processing reco input file
+reco:
+   file:
+      splitter: "|"
+      nameExpression : "BOOKING+_+([A-Z3-30]|[a-z3,30}])+_+((0?[1-9]|[12][0-9]|3[01])(0?[1-9]|1[012])(20|21)\\d\\d)+_+[Vv][0-9]{1,2}+_+[a-z0-9]{32}+.txt"
+      skipLines: 0
+      linesCommit: 1
+      lockExtension: .lock
+      # Allowed value for itemReader: recoFlatFileItemReader
+      itemReader: recoFlatFileItemReader
+      
+# Fields to map in Reco Input file 
+recoFileParameters: 
+           - PG_REF_NUM
+           - RECO_BOOKING_AMOUNT
+           - RECO_DATE_TIME
+           - RECO_ORDER_ID
+           
+# Properties used while processing reco input file
+settle:
+   file:
+      splitter: ","
+      nameExpression : "MPR+_+(HDFC|BOB|ISGPAY|DIRECPAY|FSS|FEDERAL|AXISBANK|ATOM|MOBIKWIK|PHONEPE|PAYTM|INGENICO)+_+(CDC|WL|UPI)+_+((0?[1-9]|[12][0-9]|3[01])(0?[1-9]|1[012])(20|21)\\d\\d)+_+[Vv][0-9]{1,2}+_+[a-z0-9]{32}+.csv"
+      skipLines: 1
+      linesCommit: 1
+      lockExtension: .lock
+      # Allowed value for itemReader: settleFlatFileItemReader
+      itemReader: settleFlatFileItemReader
+      
+# Fields to map in Settlement Input file 
+settleFileParameters: 
+           - Ext_Acq_MERCHANT_CODE
+           - Ext_Acq_TERMINAL_NUMBER
+           - Ext_Acq_REC_FMT
+           - RESPONSE_CODE
+           - Ext_Acq_CARD_TYPE
+           - Ext_Acq_CARD_NUMBER
+           - PG_DATE_TIME
+           - Ext_Acq_SETTLE_DATE
+           - Ext_Acq_APPROV_CODE
+           - Ext_Acq_INTNL_AMT
+           - TOTAL_AMOUNT
+           - ACQ_ID
+           - Ext_Acq_UPVALUE
+           - PG_REF_NUM
+           - Ext_Acq_MSF
+           - Ext_Acq_SERV_TAX
+           - Ext_Acq_SB_Cess
+           - Ext_Acq_KK_Cess
+           - Ext_Acq_CGST_AM
+           - Ext_Acq_SGST_AMT
+           - Ext_Acq_IGST_AMT
+           - Ext_Acq_UTGST AMT
+           - Ext_Acq_Net_Amount
+           - Ext_Acq_DEBITCREDIT_TYPE
+           - Ext_Acq_UDF1
+           - Ext_Acq_UDF2
+           - Ext_Acq_UDF3
+           - REFUND_FLAG
+           - Ext_Acq_UDF5
+           - RRN
+           - ARN
+           - Ext_Acq_INVOICE_NUMBER
+           - Ext_Acq_GSTN_TRANSACTION_ID
+           # Properties used while processing reco input file
+bobSettle:
+   file:
+      splitter: ","
+      nameExpression : "MPR+_+BOB+_+CDC+_+((0?[1-9]|[12][0-9]|3[01])(0?[1-9]|1[012])(20|21)\\d\\d)+_+[Vv][0-9]{1,2}+_+[a-z0-9]{32}+.csv"
+      skipLines: 1
+      linesCommit: 1
+      lockExtension: .lock
+      # Allowed value for itemReader: bobSettleFlatFileItemReader
+      itemReader: bobSettleFlatFileItemReader
+      
+# Fields to map in Settlement Input file 
+bobSettleFileParameters: 
+          - Ext_Acq_TRANSACTION_ID
+          - Ext_Acq_MERCHANT_AGGREGATOR_ID
+          - Ext_Acq_MID
+          - Ext_Acq_MERCHANT_LEGAL_NAME
+          - Ext_Acq_SID
+          - Ext_Acq_STORE_TRADING_NAME
+          - Ext_Acq_TID
+          - Ext_Acq_SETTLEMENT_DATE
+          - PG_DATE_TIME
+          - Ext_Acq_TRANSACTION_TIME
+          - Ext_Acq_CARD_NUMBER
+          - RESPONSE_CODE
+          - Ext_Acq_TRANSACTION_CURRENCY
+          - Ext_Acq_TRANSACTION_AMOUNT
+          - Ext_Acq_ADDITIONAL_AMOUNT
+          - Ext_Acq_MERCHANT_CATEGORY_CODE
+          - Ext_Acq_PAYMENT_METHOD
+          - Ext_Acq_ONUS_INDICATOR
+          - Ext_Acq_SCHEME
+          - Ext_Acq_INTERCHANGE_CATEGORY
+          - Ext_Acq_DESTINATION
+          - Ext_Acq_SETTLEMENT_CURRENCY
+          - Ext_Acq_SETTLEMENT_AMOUNT
+          - Ext_Acq_SETTLEMENT_CONVERSION_RATE_TABLE
+          - Ext_Acq_SETTLEMENT_CONVERSION_RATE
+          - Ext_Acq_BUSINESS_DATE_FOR_SETTLEMENT_CURRENCY_CONVERSION
+          - Ext_Acq_MSF%
+          - Ext_Acq_MSF_AMOUNT
+          - Ext_Acq_GST
+          - RECO_TOTAL_AMOUNT
+          - Ext_Acq_MSF_FIXED_FEE_CURRENCY
+          - Ext_Acq_MSF_FIXED_FEE
+          - Ext_Acq_MSF_MINIMUM_AMOUNT
+          - Ext_Acq_MSF_MAXIMUM_AMOUNT
+          - Ext_Acq_MSF_FIXED_FEE_GREATER_THAN_OR_LESSER_THAN_INDICATOR
+          - Ext_Acq_MSF_FIXED_FEE_CONVERSION_RATE_TABLE
+          - Ext_Acq_MSF_FIXED_FEE_CONVERSION_RATE
+          - Ext_Acq_MSF_FIXED_FEE_CONVERTED_AMOUNT
+          - Ext_Acq_MSF_CONVERTED_MINIMUM_AMOUNT
+          - Ext_Acq_MSF_CONVERTED_MAXIMUM_AMOUNT
+          - Ext_Acq_CSF_CURRENCY
+          - Ext_Acq_CSF%
+          - Ext_Acq_CSF_AMOUNT
+          - Ext_Acq_CSF_FIXED_FEE_CURRENCY
+          - Ext_Acq_CSF_FIXED_FEE
+          - Ext_Acq_CSF_MINIMUM_AMOUNT
+          - Ext_Acq_CSF_MAXIMUM_AMOUNT
+          - Ext_Acq_CSF_GREATER_THAN_OR_LESSER_THAN_INDICATOR
+          - Ext_Acq_CSF_FIXED_FEE_RATE_TABLE
+          - Ext_Acq_CSF_FIXED_FEE_CONVERSION_RATE_VALUE
+          - Ext_Acq_CSF_CONVERTED_FIXED_FEE_AMOUNT
+          - Ext_Acq_CSF_CONVERTED_MINIMUM_AMOUNT
+          - Ext_Acq_CSF_CONVERTED_MAXIMUM_AMOUNT
+          - Ext_Acq_ISF_CURRENCY
+          - Ext_Acq_ISF%
+          - Ext_Acq_ISF_AMOUNT
+          - Ext_Acq_ISF_FIXED_FEE_CURRENCY
+          - Ext_Acq_ISF_FIXED_FEE
+          - Ext_Acq_ISF_MINIMUM_AMOUNT
+          - Ext_Acq_ISF_MAXIMUM_AMOUNT
+          - Ext_Acq_ISF_FIXED_FEE_GREATER_THAN_OR_LESSER_THAN_INDICATOR
+          - Ext_Acq_ISF_FIXED_FEE_CONVERSION_RATE_TABLE
+          - Ext_Acq_ISF_FIXED_FEE_CONVERSION_RATE
+          - Ext_Acq_ISF_FIXED_FEE_CONVERTED_AMOUNT
+          - Ext_Acq_ISF_CONVERTED_MINIMUM_AMOUNT
+          - Ext_Acq_ISF_CONVERTED_MAXIMUM_AMOUNT
+          - Ext_Acq_LATE_SETTLEMENT%
+          - Ext_Acq_LATE_SETTLEMENT_FEE_AMOUNT
+          - Ext_Acq_RRF%
+          - Ext_Acq_RRF_AMOUNT
+          - Ext_Acq_INVOICE_NUMBER
+          - Ext_Acq_AUTH/APPROVAL_CODE
+          - Ext_Acq_REVERSAL_CODE
+          - Ext_Acq_RESPONSE_CODE
+          - Ext_Acq_APPROVED/DECLINED_INDICATOR
+          - RRN
+          - Ext_Acq_STAN
+          - ARN
+          - RECO_ACQ_ID
+          - PG_REF_NUM
+          - Ext_Acq_PAYMENT_GATEWAY_ORIGINAL_TRANSACTION_ID
+          - Ext_Acq_PAYMENT_GATEWAY_REFERENCE_TRANSACTION_ID
+          - Ext_Acq_ORIGINAL_TRANSACTION_ID
+          - Ext_Acq_ORIGINAL_TRANSACTION_TYPE
+          - Ext_Acq_ORIGINAL_MESSAGE_TYPE
+          - Ext_Acq_ORIGINAL_TRANSACTION_DATE
+          - Ext_Acq_ORIGINAL_TRANSACTION_TIME
+          - Ext_Acq_TRANSACTION_IP
+          - Ext_Acq_3-D_SECURE_(YES_OR_NO)
+          - Ext_Acq_ECI_INDICATOR
+          - Ext_Acq_3-D_SECURE_IP_ADDRESS
+          - Ext_Acq_ARN
+          - Ext_Acq_SCHEME_FILE_GENERATION_DATE
+          - Ext_Acq_MERCHANT_SETTLEMENT_DATE_
+          - Ext_Acq_CURRENT_TRANSACTION_STATUS
+          - Ext_Acq_UDF_1_CAPTION
+          - Ext_Acq_UDF_1_VALUE
+          - Ext_Acq_UDF_2_CAPTION
+          - Ext_Acq_UDF_2_VALUE
+          - Ext_Acq_UDF_3_CAPTION
+          - Ext_Acq_UDF_3_VALUE
+          - Ext_Acq_UDF_4_CAPTION
+          - Ext_Acq_UDF_4_VALUE
+          - Ext_Acq_UDF_5_CAPTION
+          - Ext_Acq_UDF_5_VALUE
+          - Ext_Acq_UDF_6_CAPTION
+          - Ext_Acq_UDF_6_VALUE
+          - Ext_Acq_UDF_7_CAPTION
+          - Ext_Acq_UDF_7_VALUE
+          - Ext_Acq_UDF_8_CAPTION
+          - Ext_Acq_UDF_8_VALUE
+          - Ext_Acq_UDF_9_CAPTION
+          - Ext_Acq_UDF_9_VALUE
+          - Ext_Acq_UDF_10_CAPTION
+          - Ext_Acq_UDF_10_VALUE
+          - Ext_Acq_UDF_11_CAPTION
+          - REFUND_FLAG
+          - Ext_Acq_UDF_12_CAPTION
+          - Ext_Acq_UDF_12_VALUE
+          - Ext_Acq_UDF_13_CAPTION
+          - Ext_Acq_UDF_13_VALUE
+          - Ext_Acq_UDF_14_CAPTION
+          - Ext_Acq_UDF_14_VALUE
+          - Ext_Acq_UDF_15_CAPTION
+          - Ext_Acq_UDF_15_VALUE
+          - Ext_Acq_UDF_16_CAPTION
+          - Ext_Acq_UDF_16_VALUE
+          - Ext_Acq_SMS_DMS_INDICATOR
+          - Ext_Acq_SETTLEMENT_RECEIVED_STATUS
+          - Ext_Acq_SETTLEMENT_RECEIVED_DATE
+           
+# Properties used while processing Upi Settlement input file
+upiSettle:
+   file:
+      splitter: ","
+      nameExpression : "MPR+_+[A-Z]{2,10}+_+UPI+_+((0?[1-9]|[12][0-9]|3[01])(0?[1-9]|1[012])(20|21)\\d\\d)+_+[Vv][0-9]{1,2}+_+[a-z0-9]{32}+.csv"
+      skipLines: 1
+      linesCommit: 1
+      lockExtension: .lock
+      # Allowed value for itemReader: upiSettleFlatFileItemReader
+      itemReader: upiSettleFlatFileItemReader
+      
+# Fields to map in Upi Settlement Input file 
+upiSettleFileParameters: 
+           - Ext_Acq_EXTERNAL_MID
+           - Ext_Acq_EXTERNAL_TID
+           - Ext_Acq_UPI_MERCHANT_ID
+           - Ext_Acq_MERCHANT_NAME
+           - Ext_Acq_MERCHANT_VPA
+           - Ext_Acq_PAYER_VPA
+           - RECO_ACQ_ID
+           - PG_REF_NUM
+           - RRN
+           - PG_DATE_TIME
+           - Ext_Acq_SETTLEMENT_DATE
+           - Ext_Acq_CURRENCY
+           - Ext_Acq_TRANSACTION_AMOUNT
+           - Ext_Acq_MSF_AMOUNT
+           - Ext_Acq_CGST_AMT
+           - Ext_Acq_SGST_AMT
+           - Ext_Acq_IGST_AMT
+           - Ext_Acq_UTGST_AMT
+           - RECO_TOTAL_AMOUNT
+           - REFUND_FLAG
+           - Ext_Acq_GST_INVOICE_NO
+           - Ext_Acq_TRANS_TYPE
+           - Ext_Acq_PAY_TYPE
+           - RESPONSE_CODE
+
+# Properties used while processing refund input file  
+refund:
+   file:
+      splitter: "|"
+      nameExpression : "[Rr]efundvalidation+_+[A-Z]{3,4}+_+(NB|DC|CC|CDC|PG|WL|EM|RP|EX)+_+((0?[1-9]|[12][0-9]|3[01])(0?[1-9]|1[012])(20|21)\\d\\d)+_+[Vv][0-9]{1,2}+_+[a-z0-9]{32}+.txt"
+      skipLines: 0
+      linesCommit: 1
+      lockExtension: .lock
+      # Allowed value for itemReader: refundFlatFileItemReader
+      itemReader: refundFlatFileItemReader
+
+# Fields to map in Refund Input file      
+refundFileParameters:
+           - SALE_PG_REF_NUM
+           - REFUND_FLAG
+           - RECO_REFUNDAMOUNT
+           - SALE_ACQ_ID
+           - STATUS
+           - REFUND_DATE_TIME
+           - RECO_ACQ_ID
+           - RECO_DATE_TIME
+           - RECO_BOOKING_AMOUNT
+           - PG_REF_NUM
+           - RECO_PG_TXN_MESSAGE
+           - RECO_ORDER_ID
+           - REFUND_ORDER_ID
+           
+# Properties used while processing refund input file
+refundIrctc:
+   file:
+      splitter: "|"
+      nameExpression : "REFUND+_+([A-Z3-30]|[a-z3,30}])+_+((0?[1-9]|[12][0-9]|3[01])(0?[1-9]|1[012])(20|21)\\d\\d)+_+[Vv][0-9]{1,2}+_+[a-z0-9]{32}+.txt"
+      skipLines: 0
+      linesCommit: 1
+      lockExtension: .lock
+      # Allowed value for itemReader: refundIrctcFlatFileItemReader
+      itemReaderIrctc: refundIrctcFlatFileItemReader
+      
+# Fields to map in Refund Input file 
+refundIrctcFileParameters:
+           - RECO_ORDER_ID
+           - REFUND_FLAG
+           - RECO_REFUNDAMOUNT
+           - PG_REF_NUM
+           - REFUND_DATE_TIME
+           - RECO_BOOKING_AMOUNT
+           - REFUND_ORDER_ID
+           - RECO_ACQ_ID
+# Properties used while processing refund input file
+refundTicketing:
+   file:
+      splitter: "|"
+      nameExpression : "refund+_+(CASHLESSO|CLSO)+_+((20|21)\\d\\d)(0?[1-9]|1[012])(0?[1-9]|[12][0-9]|3[01])+_+[Vv][0-9]{1,2}+.txt"
+      skipLines: 0
+      linesCommit: 1
+      lockExtension: .lock
+      # Allowed value for itemReader: refundTicketingFlatFileItemReader
+      itemReaderTicketing: refundTicketingFlatFileItemReader
+      
+# Fields to map in Refund Input file 
+refundTicketingFileParameters:
+           - RECO_ORDER_ID
+           - REFUND_FLAG
+           - REFUND_AMOUNT
+           - PG_REF_NUM
+           - REFUND_DATE_TIME
+           - RECO_BOOKING_AMOUNT
+           - REFUND_ORDER_ID
+           - RECO_ACQ_ID
+# Properties used while processing delta refund input file         
+deltaRefundIrctc:
+   file:
+      splitter: "|"
+      nameExpression : "DELTAREFUND+_+([A-Z3-30]|[a-z3,30}])+_+((0?[1-9]|[12][0-9]|3[01])(0?[1-9]|1[012])(20|21)\\d\\d)+_+[Vv][0-9]{1,2}+_+[a-z0-9]{32}+.txt"
+      skipLines: 0
+      linesCommit: 1
+      lockExtension: .lock
+      # Allowed value for itemReader: deltaRefundIrctcFlatFileItemReader
+      itemReaderIrctc: deltaRefundIrctcFlatFileItemReader
+      
+# Fields to map in Refund Input file 
+deltaRefundIrctcFileParameters:
+           - RECO_ORDER_ID
+           - REFUND_FLAG
+           - RECO_REFUNDAMOUNT
+           - PG_REF_NUM
+           - REFUND_DATE_TIME
+           - RECO_BOOKING_AMOUNT
+           - REFUND_ORDER_ID  
+           - UDF6 
+              
+# Properties associated with poller
+poller:
+    delay: 1000
+    read: -1
+    
+# Properties associated with validation skip mechanism
+exception:
+   limit:
+      ignore: 5
+      retry: 3
+   
+# Propeties associated with Thread
+thread:
+   size:
+     corePool: 100
+
+# Properties associated to Mongo DB mongoDb
+recoMongoDbConfig:
+   name: pay10
+   uri: mongodb://172.16.2.16:27017/pay10?maxPoolSize=1000&minPoolSize=1
+   transactionColl: transaction
+   reportingColl: reporting
+   mongoURIprefix: "mongodb://"
+   mongoURIsuffix: "@172.16.2.16:27017/pay10?maxPoolSize=1000&minPoolSize=1"
+   username: root
+   password: root123
+   refundAirIrctc: "http://localhost:8080/pgws/internalRefund"
+   deltaRefundIrctcUrl: "http://localhost:8080/pgws/internalRefund"
+   serverId: 81
+   txnStatusUrl: "http://localhost:8080/sms/updateTxnStatus"
+   txnStatusColl: transactionStatus
+   txnExcepColl: transactionStatusException
+   transactionStatusFields: CARD_MASK,CUST_NAME,MOP_TYPE,CURRENCY_CODE,STATUS,RESPONSE_CODE,RESPONSE_MESSAGE,ACCT_ID,RECO_PAYMENT_TYPE,RECO_ACQUIRER_TYPE,AUTH_CODE,PG_RESP_CODE,RECO_PG_TXN_MESSAGE,RRN,PG_REF_NUM,SURCHARGE_FLAG,CREATE_DATE,UPDATE_DATE,SURCHARGE_AMOUNT,RECO_ACQ_ID,UDF1,UDF2,UDF3,UDF4,UDF5,UDF6,RECO_TOTAL_AMOUNT,PAYMENTS_REGION,RECO_CARD_HOLDER_TYPE,DATE_INDEX,PG_TDR_SC,ACQUIRER_TDR_SC,PG_GST,ACQUIRER_GST,CARD_HOLDER_NAME,INVOICE_ID,RECO_TXNTYPE,SETTLEMENT_DATE,SETTLEMENT_FLAG,SETTLEMENT_DATE_INDEX,INTERNAL_CARD_ISSUER_BANK
+   postSettlementAutoRefundUrl: "http://127.0.0.1:8080/pgws/postSettlementAutoRefund"
+   
+   #name: ipaymongodb
+   #uri: mongodb://192.168.1.103:27017/ipaymongodb?maxPoolSize=1000&minPoolSize=1
+   #transactionColl: finalTest
+   #reportingColl: reporting
+   #mongoURIprefix: "mongodb://"
+   #mongoURIsuffix: "@192.168.1.103:27017/ipaymongodb?maxPoolSize=1000&minPoolSize=1"
+   #username: adminuser
+   #password: adminuser
+   #refundAirIrctc: "http://192.168.1.103:8083/pgws/internalRefund"
+   #deltaRefundIrctcUrl: "http://192.168.1.103:8083/pgws/internalRefund"
+  
+# Properties associated to Currencies
+currencies:
+   356: 2
+   840: 2
+   826: 2
+   978: 2
+   784: 2
+   036: 2
+   124: 0
+   000: 2
+
+# Fields to map transaction collection fields 
+transactionFields:
+    - _id
+    - CARD_MASK
+    - TXN_ID
+    - TXNTYPE
+    - CUST_NAME
+    - AMOUNT
+    - TOTAL_AMOUNT
+    - SALE_AMOUNT
+    - SALE_TOTAL_AMOUNT
+    - RECO_ORDER_ID
+    - PAY_ID
+    - MOP_TYPE
+    - CURRENCY_CODE
+    - STATUS
+    - RESPONSE_CODE
+    - RESPONSE_MESSAGE
+    - ACCT_ID
+    - CUST_EMAIL
+    - ORIG_TXN_ID
+    - ORIG_TXNTYPE
+    - RECO_PAYMENT_TYPE
+    - RECO_ACQUIRER_TYPE
+    - PRODUCT_DESC
+    - AUTH_CODE
+    - PG_DATE_TIME
+    - PG_RESP_CODE
+    - RECO_PG_TXN_MESSAGE
+    - INTERNAL_CUST_IP
+    - INTERNAL_TXN_AUTHENTICATION
+    - INTERNAL_CARD_ISSUER_BANK
+    - INTERNAL_CARD_ISSUER_COUNTRY
+    - INTERNAL_USER_EMAIL
+    - OID
+    - INTERNAL_CUST_COUNTRY_NAME
+    - ARN
+    - RRN
+    - INTERNAL_REQUEST_FIELDS
+    - PG_REF_NUM
+    - IS_RECURRING
+    - RECURRING_TRANSACTION_COUNT
+    - RECURRING_TRANSACTION_INTERVAL
+    - SURCHARGE_FLAG
+    - CREATE_DATE
+    - UPDATE_DATE
+    - DATE_INDEX
+    - PG_DATE_TIME_INDEX
+    - SURCHARGE_AMOUNT
+    - RECO_ACQ_ID
+    - SURCHARGE_FLAG
+    - PAYMENTS_REGION
+    - RECO_CARD_HOLDER_TYPE
+    - CARD_ISSUER_BANK
+    - REFUND_FLAG
+    - REFUND_ORDER_ID
+    - RECO_PG_TXN_MESSAGE
+    - UDF6
+    - RECO_POST_SETTLED_FLAG
+    - REQUEST_DATE
+    - INSERTION_DATE
+    - CARD_HOLDER_NAME
+    - ACQUIRER_TYPE
+    
+    
+# Fields to map reporting collection fields 
+reportingFields: 
+    - TXN_ID
+    - RECO_TXNTYPE
+    - FILE_NAME
+    - FILE_LINE_NO
+    - FILE_LINE_DATA
+    - DB_TXN_ID
+    - DB_TXNTYPE
+    - DB_OID
+    - DB_ACQ_ID
+    - DB_ORIG_TXN_ID
+    - DB_ORIG_TXNTYPE
+    - DB_AMOUNT
+    - DB_PG_REF_NUM
+    - DB_ORDER_ID
+    - DB_PAY_ID
+    - DB_ACQUIRER_TYPE
+    - CREATE_DATE
+    - UPDATE_DATE
+    - RESPONSE_CODE
+    - RESPONSE_MESSAGE
+    - DB_USER_TYPE
+    - RECO_EXCEPTION_STATUS
+
+# Tomcat server port number    
+server:
+   port: 8094
+
+logging:
+    path: /home/Properties/logs
