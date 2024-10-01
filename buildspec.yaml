@@ -13,8 +13,8 @@ phases:
   install:
     commands:
       - echo "Installing necessary dependencies"
-      - yum install -y git aws-cli
-      - yum install -y java-1.8.0-openjdk-devel  # Ensure Java 8 is installed
+      - yum install -y epel-release
+      - yum install -y java-1.8.0-openjdk-devel || yum install -y java-openjdk
 
   pre_build:
     commands:
