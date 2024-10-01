@@ -1,59 +1,39 @@
-name: Build and Deploy
-
-on:
-  push:
-    branches:
-      - main  # Adjust to your main branch name
+version: 0.2
 
 env:
-  S3_BUCKET: "pereprod.sahiltest"           # Your S3 bucket name
-  AWS_REGION: "eu-central-1"                # Your AWS region
-  CICD_RELEASES: "/opt/cicd-releases"       # Path for releases
-  COMPONENT_DIR: "pay10-pg-ws"              # Directory of the component to build
-  BUILD_COMMAND: "clean bootWar -x test"    # Build command
-  DATE_TIME: ${{ github.run_id }}           # Unique identifier for builds
+  variables:
+    GITLAB_REPO_URL: "https://github.com/sahilk020/artemis-main-bp-admin.git"
+    S3_BUCKET: "pereprod.sahiltest"
+    AWS_REGION: "eu-central-1"
+    CICD_RELEASES: "/opt/cicd-releases"
+    COMPONENT_DIR: "pay10-pg-ws"
+    BUILD_COMMAND: "clean bootWar -x test"
 
-jobs:
+phases:
+  install:
+    commands:
+      - echo "Installing necessary dependencies"
+      - yum install -y git aws-cli
+
+  pre_build:
+    commands:
+      - echo "Cloning the repository"
+      - git clone $GITLAB_REPO_URL /opt/code
+
   build:
-    runs-on: ubuntu-latest
+    commands:
+      - echo "Building the project"
+      - cd /opt/code/$COMPONENT_DIR
+      - chmod +x gradlew
+      - ./gradlew $BUILD_COMMAND
 
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v2
+  post_build:
+    commands:
+      - echo "Preparing to upload to S3"
+      - mkdir -p ${CICD_RELEASES}/$(date +"%Y%m%d_%H%M%S")
+      - mv build/libs/*.war ${CICD_RELEASES}/$(date +"%Y%m%d_%H%M%S")/
+      - aws s3 cp ${CICD_RELEASES} s3://$S3_BUCKET/cicd-releases/pgws/$(date +"%Y%m%d_%H%M%S")/ --recursive --region $AWS_REGION
 
-      - name: Set up Java and Install Dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y git awscli openjdk-8-jdk
-          echo "Set Date And Time"
-          DATE_TIME=$(TZ='Asia/Kolkata' date +"%Y%m%d_%H%M%S")
-          echo "DATE_TIME=${DATE_TIME}" >> $GITHUB_ENV
-
-      - name: Build the Component
-        run: |
-          echo "Building the pgws component"
-          if [ ! -d "${COMPONENT_DIR}" ]; then echo "Component ${COMPONENT_DIR} not found!" && exit 1; fi
-          cd $COMPONENT_DIR
-          chmod +x gradlew
-          ./gradlew $BUILD_COMMAND
-          echo "Build completed"
-
-      - name: Prepare and Upload WAR file to S3
-        run: |
-          mkdir -p ${CICD_RELEASES}/${DATE_TIME}
-          mv build/libs/*.war ${CICD_RELEASES}/${DATE_TIME}/
-          echo "Preparing and uploading WAR file to S3"
-          aws s3 cp ${CICD_RELEASES}/${DATE_TIME} s3://$S3_BUCKET/cicd-releases/pgws/${DATE_TIME}/ --region $AWS_REGION --recursive
-          echo "WAR file uploaded to S3 successfully"
-
-      - name: Prepare Deployment Artifact for CodeDeploy
-        run: |
-          mkdir -p /opt/deployment-artifact/
-          cp -r ${CICD_RELEASES}/${DATE_TIME}/*.war /opt/code/codedeploy-files/appspec.yml /opt/code/codedeploy-files/scripts/* /opt/deployment-artifact/
-          echo "Deployment artifact prepared"
-
-      - name: Upload Artifacts
-        uses: actions/upload-artifact@v2
-        with:
-          name: codeBuildArtifacts
-          path: /opt/deployment-artifact/*
+artifacts:
+  files:
+    - ${CICD_RELEASES}/*
