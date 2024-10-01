@@ -12,9 +12,17 @@ env:
 phases:
   install:
     commands:
-      - echo "Installing necessary dependencies"
-      - yum install -y epel-release
-      - yum install -y java-1.8.0-openjdk-devel || yum install -y java-openjdk
+      - echo "Attempting to install Java via Amazon Linux extras"
+      - amazon-linux-extras install -y java-openjdk11 || {
+          echo "Amazon Linux extras installation failed, downloading Java manually";
+          curl -O https://download.java.net/java/GA/jdk8/latest/binaries/jdk-8u161-linux-x64.tar.gz;
+          tar -xzf jdk-8u161-linux-x64.tar.gz;
+          mv jdk1.8.0_161 /usr/local/;
+          export JAVA_HOME=/usr/local/jdk1.8.0_161;
+          export PATH=$JAVA_HOME/bin:$PATH;
+          echo "Java installed from manual download";
+        }
+      - java -version
 
   pre_build:
     commands:
