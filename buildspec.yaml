@@ -7,7 +7,6 @@ on:
 
 env:
   GITLAB_REPO_URL: "https://github.com/sahilk020/artemis-main-bp-admin.git"
-  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Use GitHub token for authentication
   S3_BUCKET: "pereprod.sahiltest"
   AWS_REGION: "eu-central-1"
   CICD_RELEASES: "/opt/cicd-releases"
@@ -16,25 +15,26 @@ env:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest  # Using the default Ubuntu runner
 
     steps:
       - name: Checkout Code
         uses: actions/checkout@v2
 
-      - name: Set up Amazon Linux Docker
-        uses: docker://amazonlinux:latest
+      - name: Set up Amazon Linux 2 Docker
+        uses: docker://amazonlinux:2
         with:
           args: |
             /bin/bash -c '
             echo "Installing necessary dependencies"
-            yum install -y git aws-cli
-            echo "Set Date And Time"
+            yum install -y git aws-cli java-1.8.0-openjdk-devel
+
+            # Set the Date And Time
             DATE_TIME=$(TZ="Asia/Kolkata" date +"%Y%m%d_%H%M%S")
             echo "DATE_TIME=${DATE_TIME}" >> $GITHUB_ENV
             
             echo "Cloning the repository from GitHub"
-            git clone -b ${{ github.ref }} $GITLAB_REPO_URL /opt/code
+            git clone -b main $GITLAB_REPO_URL /opt/code
             
             echo "Building the component"
             cd /opt/code/$COMPONENT_DIR
@@ -53,4 +53,3 @@ jobs:
           name: codeBuildArtifacts
           path: |
             /opt/cicd-releases/*
-
