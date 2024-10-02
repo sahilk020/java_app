@@ -44,6 +44,11 @@ phases:
           java -version;
           exit 1;
         }
+      - echo "Checking if WAR file was generated"
+      - ls build/libs/*.war || {
+          echo "No WAR file found, build failed.";
+          exit 1;
+        }
 
   post_build:
     commands:
@@ -53,4 +58,4 @@ phases:
 
 artifacts:
   files:
-    - ${CICD_RELEASES}/*
+    - /opt/cicd-releases/**/*.war
