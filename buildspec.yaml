@@ -37,7 +37,8 @@ phases:
       - echo "Building the project"
       - cd /opt/code/$COMPONENT_DIR
       - chmod +x gradlew
-      - ./gradlew $BUILD_COMMAND || {
+      - |
+        ./gradlew $BUILD_COMMAND || {
           echo "Build failed. Checking for Java issues...";
           echo "JAVA_HOME: $JAVA_HOME";
           java -version;
