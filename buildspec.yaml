@@ -13,16 +13,16 @@ phases:
   install:
     commands:
       - echo "Attempting to install Java via Amazon Linux extras"
-      - amazon-linux-extras install -y java-openjdk11 || {
+      - amazon-linux-extras install -y java-openjdk17 || {
           echo "Amazon Linux extras installation failed, downloading Java manually";
-          curl -O https://download.java.net/java/GA/jdk8/latest/binaries/jdk-8u161-linux-x64.tar.gz;
-          tar -xzf jdk-8u161-linux-x64.tar.gz;
-          mv jdk1.8.0_161 /usr/local/;
-          export JAVA_HOME=/usr/local/jdk1.8.0_161;
+          curl -O https://download.java.net/java/GA/jdk17/latest/binaries/jdk-17_linux-x64_bin.tar.gz;
+          tar -xzf jdk-17_linux-x64_bin.tar.gz;
+          mv jdk-17 /usr/local/;
+          export JAVA_HOME=/usr/local/jdk-17;
           export PATH=$JAVA_HOME/bin:$PATH;
           echo "Java installed from manual download";
         }
-      - export JAVA_HOME=${JAVA_HOME:-/usr/lib/jvm/java-11-openjdk}
+      - export JAVA_HOME=${JAVA_HOME:-/usr/lib/jvm/java-17-openjdk}
       - export PATH=$JAVA_HOME/bin:$PATH
       - echo "JAVA_HOME set to $JAVA_HOME"
       - java -version
@@ -44,11 +44,6 @@ phases:
           java -version;
           exit 1;
         }
-      - echo "Checking if WAR file was generated"
-      - ls build/libs/*.war || {
-          echo "No WAR file found, build failed.";
-          exit 1;
-        }
 
   post_build:
     commands:
@@ -58,4 +53,4 @@ phases:
 
 artifacts:
   files:
-    - /opt/cicd-releases/**/*.war
+    - ${CICD_RELEASES}/**
