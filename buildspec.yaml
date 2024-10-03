@@ -34,18 +34,14 @@ phases:
   build:
     commands:
       - echo "Building components..."
-      - COMPONENTS="crm,crypto,bindb,pgui,email,sms,batch,pgws,crmws,mobile,si"
-      - COMPONENT_DIRECTORIES="pay10-crm,pay10-crypto,pay10-bindb,pay10-pg-ui,pay10-notification-email,pay10-notification-sms,pay10-batchProcessor,pay10-pg-ws,pay10-crm-ws,pay10-mobile"
-      - BUILD_COMMANDS="clean build -x test,clean bootWar -x test,clean build -x test,clean bootWar -x test,clean bootWar -x test,clean bootWar -x test,clean build -x test,clean bootWar -x test,clean build -x test,clean bootWar -x test"
+      - COMPONENTS=("crm" "crypto" "bindb" "pgui" "email" "sms" "batch" "pgws" "crmws" "mobile" "si")
+      - COMPONENT_DIRECTORIES=("pay10-crm" "pay10-crypto" "pay10-bindb" "pay10-pg-ui" "pay10-notification-email" "pay10-notification-sms" "pay10-batchProcessor" "pay10-pg-ws" "pay10-crm-ws" "pay10-mobile")
+      - COMPONENT_COMMANDS=("clean build -x test" "clean bootWar -x test" "clean build -x test" "clean bootWar -x test" "clean bootWar -x test" "clean bootWar -x test" "clean build -x test" "clean bootWar -x test" "clean build -x test" "clean bootWar -x test")
 
-      - IFS=',' read -r -a componentArray <<< "$COMPONENTS"
-      - IFS=',' read -r -a directoryArray <<< "$COMPONENT_DIRECTORIES"
-      - IFS=',' read -r -a commandArray <<< "$BUILD_COMMANDS"
-
-      - for i in "${!componentArray[@]}"; do
-          component=${componentArray[i]};
-          componentDirectory=${directoryArray[i]};
-          buildCommand=${commandArray[i]};
+      - for i in "${!COMPONENTS[@]}"; do
+          component=${COMPONENTS[i]};
+          componentDirectory=${COMPONENT_DIRECTORIES[i]};
+          buildCommand=${COMPONENT_COMMANDS[i]};
 
           echo "Building and deploying $component component";
 
