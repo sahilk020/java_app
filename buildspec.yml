@@ -64,38 +64,38 @@ phases:
           index=$((index + 1))
         done
       - sleep 600
-      
+
       post_build:
-  commands:
-    - if [ -d "/home/sahil/cicd_release/" ]; then
-        echo "Checking for release directories in /home/sahil/cicd_release/";
-        sudo ls -l /home/sahil/cicd_release/ || echo "No release directories found.";
-        latestDir=$(sudo ls -td /home/sahil/cicd_release/*/ 2>/dev/null | head -n 1);
-      else
-        echo "No release directories found in /home/sahil/cicd_release/";
-        exit 0;
-      fi
+        commands:
+          - if [ -d "/home/sahil/cicd_release/" ]; then
+              echo "Checking for release directories in /home/sahil/cicd_release/";
+              sudo ls -l /home/sahil/cicd_release/ || echo "No release directories found.";
+              latestDir=$(sudo ls -td /home/sahil/cicd_release/*/ 2>/dev/null | head -n 1);
+            else
+              echo "No release directories found in /home/sahil/cicd_release/";
+              exit 0;
+            fi
 
-    - if [ -z "$latestDir" ]; then
-        echo "No release directories found in /home/sahil/cicd_release/";
-        exit 0;
-      fi
+          - if [ -z "$latestDir" ]; then
+              echo "No release directories found in /home/sahil/cicd_release/";
+              exit 0;
+            fi
 
-    - warFiles=$(sudo ls "$latestDir"/*.war 2>/dev/null)
+          - warFiles=$(sudo ls "$latestDir"/*.war 2>/dev/null)
 
-    - if [ -z "$warFiles" ]; then
-        echo "No WAR files found in the latest directory.";
-        exit 0;
-      fi
+          - if [ -z "$warFiles" ]; then
+              echo "No WAR files found in the latest directory.";
+              exit 0;
+            fi
 
-    - currentDate=$(date +'%Y%m%d_%H%M%S')
-    - backupDir="/home/tom_backup/$currentDate"
-    - sudo mkdir -p "$backupDir"
+          - currentDate=$(date +'%Y%m%d_%H%M%S')
+          - backupDir="/home/tom_backup/$currentDate"
+          - sudo mkdir -p "$backupDir"
 
-    - for warFile in $warFiles; do
-        warFileName=$(basename "$warFile");
-        sudo cp -r "/opt/tomcat/webapps/$warFileName" "$backupDir/$warFileName";
-      done
+          - for warFile in $warFiles; do
+              warFileName=$(basename "$warFile");
+              sudo cp -r "/opt/tomcat/webapps/$warFileName" "$backupDir/$warFileName";
+            done
 
 
 artifacts:
