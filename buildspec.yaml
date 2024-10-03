@@ -34,27 +34,28 @@ phases:
   build:
     commands:
       - echo "Building components..."
-      - COMPONENTS=("crm" "crypto" "bindb" "pgui" "email" "sms" "batch" "pgws" "crmws" "mobile" "si")
-      - COMPONENT_DIRECTORIES=("pay10-crm" "pay10-crypto" "pay10-bindb" "pay10-pg-ui" "pay10-notification-email" "pay10-notification-sms" "pay10-batchProcessor" "pay10-pg-ws" "pay10-crm-ws" "pay10-mobile")
-      - COMPONENT_COMMANDS=("clean build -x test" "clean bootWar -x test" "clean build -x test" "clean bootWar -x test" "clean bootWar -x test" "clean bootWar -x test" "clean build -x test" "clean bootWar -x test" "clean build -x test" "clean bootWar -x test")
+      - |
+        COMPONENTS=("crm" "crypto" "bindb" "pgui" "email" "sms" "batch" "pgws" "crmws" "mobile" "si")
+        COMPONENT_DIRECTORIES=("pay10-crm" "pay10-crypto" "pay10-bindb" "pay10-pg-ui" "pay10-notification-email" "pay10-notification-sms" "pay10-batchProcessor" "pay10-pg-ws" "pay10-crm-ws" "pay10-mobile")
+        COMPONENT_COMMANDS=("clean build -x test" "clean bootWar -x test" "clean build -x test" "clean bootWar -x test" "clean bootWar -x test" "clean bootWar -x test" "clean build -x test" "clean bootWar -x test" "clean build -x test" "clean bootWar -x test")
 
-      - for i in "${!COMPONENTS[@]}"; do
-          component=${COMPONENTS[i]};
-          componentDirectory=${COMPONENT_DIRECTORIES[i]};
-          buildCommand=${COMPONENT_COMMANDS[i]};
+        for i in "${!COMPONENTS[@]}"; do
+          component=${COMPONENTS[i]}
+          componentDirectory=${COMPONENT_DIRECTORIES[i]}
+          buildCommand=${COMPONENT_COMMANDS[i]}
 
-          echo "Building and deploying $component component";
+          echo "Building and deploying $component component"
 
           # Create the build directory if it doesn't exist
-          sudo mkdir -p /sahil/build/$componentDirectory;
-          cd /sahil/build/$componentDirectory/;
+          sudo mkdir -p /sahil/build/$componentDirectory
+          cd /sahil/build/$componentDirectory/
 
-          sudo chmod +x gradlew;
-          JAVA_HOME=$JAVA_HOME ./gradlew $buildCommand;
+          sudo chmod +x gradlew
+          JAVA_HOME=$JAVA_HOME ./gradlew $buildCommand
 
           # Move built artifacts to /sahil/artifacts
-          sudo mkdir -p /sahil/artifacts;  # Ensure the artifacts directory exists
-          sudo mv build/libs/* /sahil/artifacts/;
+          sudo mkdir -p /sahil/artifacts  # Ensure the artifacts directory exists
+          sudo mv build/libs/* /sahil/artifacts/
         done
 
   post_build:
