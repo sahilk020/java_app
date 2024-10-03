@@ -5,25 +5,27 @@ phases:
     runtime-versions:
       java: corretto8
     commands:
-<<<<<<< HEAD
       - echo "Installing necessary dependencies..."
-      - yum install -y sshpass
-=======
-      - echo "Attempting to install Java via Amazon Linux extras"
-      - amazon-linux-extras install -y java-openjdk17 || {
-          echo "Amazon Linux extras installation failed, downloading Java manually";
-          curl -O https://download.java.net/java/GA/jdk17/latest/binaries/jdk-17_linux-x64_bin.tar.gz;
-          tar -xzf jdk-17_linux-x64_bin.tar.gz;
-          mv jdk-17 /usr/local/;
-          export JAVA_HOME=/usr/local/jdk-17;
-          export PATH=$JAVA_HOME/bin:$PATH;
-          echo "Java installed from manual download";
-        }
-      - export JAVA_HOME=${JAVA_HOME:-/usr/lib/jvm/java-17-openjdk}
-      - export PATH=$JAVA_HOME/bin:$PATH
-      - echo "JAVA_HOME set to $JAVA_HOME"
+      - yum install -y wget git
+      - echo "Updating the package system..."
+      - dnf update -y
+      - echo "Installing Amazon Corretto 8..."
+      - dnf install -y java-1.8.0-amazon-corretto.x86_64
+      - echo "Checking Java installation..."
       - java -version
->>>>>>> origin/main
+      - export JAVA_HOME=/usr/lib/jvm/java-1.8.0-amazon-corretto.x86_64/jre
+      - echo "JAVA_HOME is set to $JAVA_HOME"
+      - echo "Cloning the Git repository..."
+      - mkdir -p /sahil/git
+      - git clone https://github.com/sahilk020/artemis-main-bp-admin.git /sahil/git/artemis-main-bp-admin
+      - echo "Downloading and installing Apache Tomcat..."
+      - cd /tmp
+      - wget https://archive.apache.org/dist/tomcat/tomcat-10/v10.0.23/bin/apache-tomcat-10.0.23.tar.gz
+      - tar -xvf apache-tomcat-10*.tar.gz
+      - sudo mv apache-tomcat-10.0.23 /opt/tomcat
+      - sudo chown -R ec2-user:ec2-user /opt/tomcat
+      - /opt/tomcat/bin/startup.sh
+      - echo "Tomcat 10 installed and started successfully in /opt/tomcat!"
 
   pre_build:
     commands:
@@ -31,7 +33,6 @@ phases:
 
   build:
     commands:
-<<<<<<< HEAD
       - echo "Building components..."
       - |
         declare -A COMPONENT_DIRECTORIES=(
@@ -47,7 +48,7 @@ phases:
           ["mobile"]="pay10-mobile"
           ["si"]="pay10-SI"
         )
-        
+
         declare -A COMPONENT_COMMANDS=(
           ["crm"]="clean build -x test"
           ["crypto"]="clean bootWar -x test"
@@ -67,33 +68,28 @@ phases:
 
           if [ -n "$buildCommand" ] && [ -n "$componentDirectory" ]; then
             echo "Building and deploying $component component"
-            cd /var/lib/jenkins/workspace/sonar/$componentDirectory/
+            
+            # Create the build directory if it doesn't exist
+            mkdir -p /sahil/build/$componentDirectory
+            
+            cd /sahil/build/$componentDirectory/  # Change to the new directory
             chmod +x gradlew
-            JAVA_HOME=/usr/lib/jvm/java-1.8.0-amazon-corretto.x86_64/jre ./gradlew $buildCommand
-            mv build/libs/* /home/pay10ar/
+            JAVA_HOME=$JAVA_HOME ./gradlew $buildCommand
+            
+            # Move built artifacts to /sahil/artifacts
+            mkdir -p /sahil/artifacts  # Ensure the artifacts directory exists
+            mv build/libs/* /sahil/artifacts/
           else
             echo "Unsupported component: $component" && exit 1
           fi
         done
-=======
-      - echo "Building the project"
-      - cd /opt/code/$COMPONENT_DIR
-      - chmod +x gradlew
-      - |
-        ./gradlew $BUILD_COMMAND || {
-          echo "Build failed. Checking for Java issues...";
-          echo "JAVA_HOME: $JAVA_HOME";
-          java -version;
-          exit 1;
-        }
->>>>>>> origin/main
 
   post_build:
     commands:
       - echo "Deploying components..."
       - |
-        # Get the latest created directory in /home/aryan/cicd_release/
-        latestDir=$(ls -td /home/aryan/cicd_release/*/ | head -n 1)
+        # Get the latest created directory in /home/sahil/cicd_release/
+        latestDir=$(ls -td /home/sahil/cicd_release/*/ | head -n 1)
 
         # Get all the WAR file names from the latest directory
         warFiles=$(ls $latestDir/*.war)
@@ -105,7 +101,7 @@ phases:
         backupDir="/home/tom_backup/$currentDate"
         mkdir -p "$backupDir"
 
-        # Backup /opt/tomcat/webapps each WAR file to backup directory
+        # Backup each WAR file to backup directory
         for warFile in $warFiles; do
           warFileName=$(basename $warFile)
           cp -r "/opt/tomcat/webapps/$warFileName" "$backupDir/$warFileName"
@@ -113,8 +109,4 @@ phases:
 
 artifacts:
   files:
-<<<<<<< HEAD
-    - '**/*'
-=======
-    - ${CICD_RELEASES}/**
->>>>>>> origin/main
+    - '/sahil/artifacts/*'
