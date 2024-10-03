@@ -23,6 +23,7 @@ phases:
       - wget https://archive.apache.org/dist/tomcat/tomcat-10/v10.0.23/bin/apache-tomcat-10.0.23.tar.gz
       - tar -xvf apache-tomcat-10*.tar.gz
       - sudo mv apache-tomcat-10.0.23 /opt/tomcat
+      - sudo chown -R root:root /opt/tomcat
       - /opt/tomcat/bin/startup.sh
       - echo "Tomcat 10 installed and started successfully in /opt/tomcat!"
 
@@ -33,26 +34,28 @@ phases:
   build:
     commands:
       - echo "Building components..."
-      - COMPONENTS=("crm" "crypto" "bindb" "pgui" "email" "sms" "batch" "pgws" "crmws" "mobile" "si")
-      - BUILD_COMMANDS=("clean build -x test" "clean bootWar -x test" "clean build -x test" "clean bootWar -x test" "clean bootWar -x test" "clean bootWar -x test" "clean build -x test" "clean bootWar -x test" "clean build -x test" "clean bootWar -x test")
-      - COMPONENT_DIRECTORIES=("pay10-crm" "pay10-crypto" "pay10-bindb" "pay10-pg-ui" "pay10-notification-email" "pay10-notification-sms" "pay10-batchProcessor" "pay10-pg-ws" "pay10-crm-ws" "pay10-mobile")
+      - |
+        COMPONENTS=("crm" "crypto" "bindb" "pgui" "email" "sms" "batch" "pgws" "crmws" "mobile" "si")
+        COMPONENT_DIRECTORIES=("pay10-crm" "pay10-crypto" "pay10-bindb" "pay10-pg-ui" "pay10-notification-email" "pay10-notification-sms" "pay10-batchProcessor" "pay10-pg-ws" "pay10-crm-ws" "pay10-mobile")
+        BUILD_COMMANDS=("clean build -x test" "clean bootWar -x test" "clean build -x test" "clean bootWar -x test" "clean bootWar -x test" "clean bootWar -x test" "clean build -x test" "clean bootWar -x test" "clean build -x test" "clean bootWar -x test")
 
-      - for i in "${!COMPONENTS[@]}"; do
-          component=${COMPONENTS[i]};
-          buildCommand=${BUILD_COMMANDS[i]};
-          componentDirectory=${COMPONENT_DIRECTORIES[i]};
-          echo "Building and deploying $component component";
+        for i in "${!COMPONENTS[@]}"; do
+          component=${COMPONENTS[i]}
+          componentDirectory=${COMPONENT_DIRECTORIES[i]}
+          buildCommand=${BUILD_COMMANDS[i]}
+          
+          echo "Building and deploying $component component"
 
-          # Create the build directory if it doesn't exist with sudo
-          sudo mkdir -p /sahil/build/$componentDirectory;
-          
-          cd /sahil/build/$componentDirectory/  # Change to the new directory
-          sudo chmod +x gradlew;
-          JAVA_HOME=$JAVA_HOME ./gradlew $buildCommand;
-          
+          # Create the build directory if it doesn't exist
+          sudo mkdir -p /sahil/build/$componentDirectory
+          cd /sahil/build/$componentDirectory/
+
+          sudo chmod +x gradlew
+          JAVA_HOME=$JAVA_HOME ./gradlew $buildCommand
+
           # Move built artifacts to /sahil/artifacts
-          sudo mkdir -p /sahil/artifacts;  # Ensure the artifacts directory exists
-          sudo mv build/libs/* /sahil/artifacts/;
+          sudo mkdir -p /sahil/artifacts  # Ensure the artifacts directory exists
+          sudo mv build/libs/* /sahil/artifacts/
         done
 
   post_build:
