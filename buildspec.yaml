@@ -3,109 +3,80 @@ version: 0.2
 phases:
   install:
     runtime-versions:
-      java: corretto8
+      java: corretto11
     commands:
-      - echo "Installing necessary dependencies..."
-      - yum install -y wget git
-      - echo "Updating the package system..."
-      - dnf update -y
-      - echo "Installing Amazon Corretto 8..."
-      - dnf install -y java-1.8.0-amazon-corretto.x86_64
-      - echo "Checking Java installation..."
-      - java -version
-      - export JAVA_HOME=/usr/lib/jvm/java-1.8.0-amazon-corretto.x86_64/jre
-      - echo "JAVA_HOME is set to $JAVA_HOME"
-      - echo "Cloning the Git repository..."
-      - mkdir -p /sahil/git
-      - git clone https://github.com/sahilk020/artemis-main-bp-admin.git /sahil/git/artemis-main-bp-admin
-      - echo "Downloading and installing Apache Tomcat..."
-      - cd /tmp
-      - wget https://archive.apache.org/dist/tomcat/tomcat-10/v10.0.23/bin/apache-tomcat-10.0.23.tar.gz
-      - tar -xvf apache-tomcat-10*.tar.gz
-      - sudo mv apache-tomcat-10.0.23 /opt/tomcat
-      - sudo chown -R root:root /opt/tomcat
-      - /opt/tomcat/bin/startup.sh
-      - echo "Tomcat 10 installed and started successfully in /opt/tomcat!"
-
-  pre_build:
-    commands:
-      - echo "Starting pre-build phase..."
+      - echo "Installing dependencies..."
 
   build:
     commands:
-      - echo "Building components..."
-      - |
-        COMPONENTS=("crm" "crypto" "bindb" "pgui" "email" "sms" "batch" "pgws" "crmws" "mobile" "si")
-        COMPONENT_DIRECTORIES=("pay10-crm" "pay10-crypto" "pay10-bindb" "pay10-pg-ui" "pay10-notification-email" "pay10-notification-sms" "pay10-batchProcessor" "pay10-pg-ws" "pay10-crm-ws" "pay10-mobile")
-        COMPONENT_COMMANDS=("clean build -x test" "clean bootWar -x test" "clean build -x test" "clean bootWar -x test" "clean bootWar -x test" "clean bootWar -x test" "clean build -x test" "clean bootWar -x test" "clean build -x test" "clean bootWar -x test")
+      - echo "Building and deploying components..."
+      - COMPONENTS=("crm" "crypto" "bindb" "pgui" "email" "sms" "batch" "pgws" "crmws" "mobile" "si")
+      - COMPONENT_DIRECTORIES=("pay10-crm" "pay10-crypto" "pay10-bindb" "pay10-pg-ui" "pay10-notification-email" "pay10-notification-sms" "pay10-batchProcessor" "pay10-pg-ws" "pay10-crm-ws" "pay10-mobile")
+      - COMPONENT_COMMANDS=("clean build -x test" "clean bootWar -x test" "clean build -x test" "clean bootWar -x test" "clean bootWar -x test" "clean bootWar -x test" "clean build -x test" "clean bootWar -x test" "clean build -x test" "clean bootWar -x test")
 
-        for i in "${!COMPONENTS[@]}"; do
-          component=${COMPONENTS[$i]}
-          componentDirectory=${COMPONENT_DIRECTORIES[$i]}
-          buildCommand=${COMPONENT_COMMANDS[$i]}
+      - for i in "${!COMPONENTS[@]}"; do
+          component=${COMPONENTS[$i]};
+          componentDirectory=${COMPONENT_DIRECTORIES[$i]};
+          buildCommand=${COMPONENT_COMMANDS[$i]};
 
-          echo "Building and deploying $component component"
+          echo "Building and deploying $component component";
 
           # Create the build directory if it doesn't exist
-          sudo mkdir -p /sahil/build/$componentDirectory
-          cd /sahil/build/$componentDirectory/
+          sudo mkdir -p /sahil/build/$componentDirectory;
+          cd /sahil/build/$componentDirectory;
 
-          # Check if gradlew exists
-          if [[ ! -f "../$componentDirectory/gradlew" ]]; then
-            echo "Error: gradlew not found in ../$componentDirectory/"
-            exit 1
+          # Check if gradlew exists in the original repository path
+          if [[ ! -f "/sahil/git/artemis-main-bp-admin/$componentDirectory/gradlew" ]]; then
+            echo "Error: gradlew not found in /sahil/git/artemis-main-bp-admin/$componentDirectory/";
+            exit 1;
           fi
 
-          sudo cp ../$componentDirectory/gradlew .  # Copy gradlew to the current directory
-          sudo chmod +x gradlew
-          JAVA_HOME=$JAVA_HOME ./gradlew $buildCommand
+          sudo cp "/sahil/git/artemis-main-bp-admin/$componentDirectory/gradlew" .;  # Copy gradlew to the current directory
+          sudo chmod +x gradlew;
+          JAVA_HOME=$JAVA_HOME ./gradlew $buildCommand;
 
           # Check for build output
           if [[ ! -d build/libs ]]; then
-            echo "Error: No build/libs directory found after build command."
-            exit 1
+            echo "Error: No build/libs directory found after build command.";
+            exit 1;
           fi
 
           # Move built artifacts to /sahil/artifacts
-          sudo mkdir -p /sahil/artifacts  # Ensure the artifacts directory exists
-          sudo mv build/libs/* /sahil/artifacts/ || echo "Warning: No artifacts found to move."
+          sudo mkdir -p /sahil/artifacts;  # Ensure the artifacts directory exists
+          sudo mv build/libs/* /sahil/artifacts/ || echo "Warning: No artifacts found to move.";
         done
 
   post_build:
     commands:
       - echo "Deploying components..."
-      - |
-        # Get the latest created directory in /home/sahil/cicd_release/
-        latestDir=$(sudo ls -td /home/sahil/cicd_release/*/ 2>/dev/null | head -n 1)
+      - echo "Checking for release directories in /home/sahil/cicd_release/"
+      - sudo ls -l /home/sahil/cicd_release/
+      - latestDir=$(sudo ls -td /home/sahil/cicd_release/*/ 2>/dev/null | head -n 1)
 
-        # Check if the latest directory exists
-        if [ -z "$latestDir" ]; then
-          echo "No release directories found in /home/sahil/cicd_release/"
-          exit 0
+      # Check if the latest directory exists
+      - if [ -z "$latestDir" ]; then
+          echo "No release directories found in /home/sahil/cicd_release/";
+          exit 0;
         fi
 
-        # Get all the WAR file names from the latest directory
-        warFiles=$(sudo ls $latestDir/*.war 2>/dev/null)
+      # Get all the WAR file names from the latest directory
+      - warFiles=$(sudo ls $latestDir/*.war 2>/dev/null)
 
-        # Check if there are any WAR files
-        if [ -z "$warFiles" ]; then
-          echo "No WAR files found in the latest directory."
-          exit 0
+      # Check if there are any WAR files
+      - if [ -z "$warFiles" ]; then
+          echo "No WAR files found in the latest directory.";
+          exit 0;
         fi
 
-        # Get current date and time
-        currentDate=$(date +'%Y%m%d_%H%M%S')
+      # Get current date and time
+      - currentDate=$(date +'%Y%m%d_%H%M%S')
 
-        # Create backup directory with current date and time
-        backupDir="/home/tom_backup/$currentDate"
-        sudo mkdir -p "$backupDir"
+      # Create backup directory with current date and time
+      - backupDir="/home/tom_backup/$currentDate"
+      - sudo mkdir -p "$backupDir"
 
-        # Backup each WAR file to backup directory
-        for warFile in $warFiles; do
-          warFileName=$(basename $warFile)
-          sudo cp -r "/opt/tomcat/webapps/$warFileName" "$backupDir/$warFileName"
+      # Backup each WAR file to backup directory
+      - for warFile in $warFiles; do
+          warFileName=$(basename $warFile);
+          sudo cp -r "/opt/tomcat/webapps/$warFileName" "$backupDir/$warFileName";
         done
-
-artifacts:
-  files:
-    - '/sahil/artifacts/*'
