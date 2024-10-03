@@ -68,16 +68,16 @@ phases:
           if [ -n "$buildCommand" ] && [ -n "$componentDirectory" ]; then
             echo "Building and deploying $component component"
             
-            # Create the build directory if it doesn't exist
-            mkdir -p /sahil/build/$componentDirectory
+            # Create the build directory if it doesn't exist with sudo
+            sudo mkdir -p /sahil/build/$componentDirectory
             
             cd /sahil/build/$componentDirectory/  # Change to the new directory
-            chmod +x gradlew
+            sudo chmod +x gradlew
             JAVA_HOME=$JAVA_HOME ./gradlew $buildCommand
             
             # Move built artifacts to /sahil/artifacts
-            mkdir -p /sahil/artifacts  # Ensure the artifacts directory exists
-            mv build/libs/* /sahil/artifacts/
+            sudo mkdir -p /sahil/artifacts  # Ensure the artifacts directory exists
+            sudo mv build/libs/* /sahil/artifacts/
           else
             echo "Unsupported component: $component" && exit 1
           fi
@@ -88,10 +88,16 @@ phases:
       - echo "Deploying components..."
       - |
         # Get the latest created directory in /home/sahil/cicd_release/
-        latestDir=$(ls -td /home/sahil/cicd_release/*/ | head -n 1)
+        latestDir=$(sudo ls -td /home/sahil/cicd_release/*/ 2>/dev/null | head -n 1)
+
+        # Check if the latest directory exists
+        if [ -z "$latestDir" ]; then
+          echo "No release directories found in /home/sahil/cicd_release/"
+          exit 0
+        fi
 
         # Get all the WAR file names from the latest directory
-        warFiles=$(ls $latestDir/*.war 2>/dev/null)
+        warFiles=$(sudo ls $latestDir/*.war 2>/dev/null)
 
         # Check if there are any WAR files
         if [ -z "$warFiles" ]; then
@@ -104,12 +110,12 @@ phases:
 
         # Create backup directory with current date and time
         backupDir="/home/tom_backup/$currentDate"
-        mkdir -p "$backupDir"
+        sudo mkdir -p "$backupDir"
 
         # Backup each WAR file to backup directory
         for warFile in $warFiles; do
           warFileName=$(basename $warFile)
-          cp -r "/opt/tomcat/webapps/$warFileName" "$backupDir/$warFileName"
+          sudo cp -r "/opt/tomcat/webapps/$warFileName" "$backupDir/$warFileName"
         done
 
 artifacts:
