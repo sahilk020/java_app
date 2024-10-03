@@ -7,6 +7,11 @@ phases:
     commands:
       - echo "Installing dependencies..."
 
+  pre_build:
+    commands:
+      - echo "Cloning repository..."
+      - git clone https://github.com/sahilk020/artemis-main-bp-admin.git /sahil/git/artemis-main-bp-admin
+
   build:
     commands:
       - echo "Building and deploying components..."
@@ -26,7 +31,7 @@ phases:
           sudo mkdir -p /sahil/build/$componentDirectory;
           cd /sahil/build/$componentDirectory;
 
-          # Check if gradlew exists in the original repository path
+          # Check if gradlew exists in the cloned repository path
           if [[ ! -f "/sahil/git/artemis-main-bp-admin/$componentDirectory/gradlew" ]]; then
             echo "Error: gradlew not found in /sahil/git/artemis-main-bp-admin/$componentDirectory/";
             exit 1;
@@ -51,7 +56,14 @@ phases:
     commands:
       - echo "Deploying components..."
       - echo "Checking for release directories in /home/sahil/cicd_release/"
-      - sudo ls -l /home/sahil/cicd_release/
+      - |
+        if [ -d "/home/sahil/cicd_release/" ]; then
+          sudo ls -l /home/sahil/cicd_release/
+        else
+          echo "No release directories found in /home/sahil/cicd_release/"
+          exit 0;
+        fi
+
       - |
         latestDir=$(sudo ls -td /home/sahil/cicd_release/*/ 2>/dev/null | head -n 1)
 
