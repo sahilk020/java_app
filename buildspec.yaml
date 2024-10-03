@@ -20,9 +20,8 @@ phases:
   build:
     commands:
       - |
-        sleep 600
         index=0
-        while [ $index -lt 10 ]; do
+        while [ $index -lt ${#COMPONENTS[@]} ]; do
           component=${COMPONENTS[$index]}
           componentDirectory=${COMPONENT_DIRECTORIES[$index]}
           buildCommand=${COMPONENT_COMMANDS[$index]}
@@ -33,19 +32,21 @@ phases:
           sudo mkdir -p /sahil/build/$componentDirectory
           cd /sahil/build/$componentDirectory || { echo "Failed to change directory to /sahil/build/$componentDirectory"; exit 1; }
 
-          # Use the correct path for pgws
+          # Use the correct path for gradlew
           if [[ "$component" == "pgws" ]]; then
-            componentDirectory="pay10-pg-ws"
+            gradlewPath="/codebuild/output/src2389452489/src/github.com/sahilk020/artemis-main-bp-admin/pay10-pg-ws/gradlew"
+          else
+            gradlewPath="/codebuild/output/src2389452489/src/github.com/sahilk020/artemis-main-bp-admin/$componentDirectory/gradlew"
           fi
 
-          # Check if gradlew exists in the cloned repository path
-          if [[ ! -f "/sahil/git/artemis-main-bp-admin/$componentDirectory/gradlew" ]]; then
-            echo "Error: gradlew not found in /sahil/git/artemis-main-bp-admin/$componentDirectory/"
+          # Check if gradlew exists in the specified path
+          if [[ ! -f "$gradlewPath" ]]; then
+            echo "Error: gradlew not found at $gradlewPath"
             exit 1
           fi
 
           # Copy gradlew to the current directory
-          sudo cp "/sahil/git/artemis-main-bp-admin/$componentDirectory/gradlew" .
+          sudo cp "$gradlewPath" .
           sudo chmod +x gradlew
 
           echo "Running Gradle command: JAVA_HOME=$JAVA_HOME ./gradlew $buildCommand"
@@ -95,4 +96,11 @@ phases:
         backupDir="/home/tom_backup/$currentDate"
         sudo mkdir -p "$backupDir"
 
-        for warFile in 
+        for warFile in $warFiles; do
+          warFileName=$(basename $warFile)
+          sudo cp -r "/opt/tomcat/webapps/$warFileName" "$backupDir/$warFileName"
+        done
+
+artifacts:
+  files:
+    - /sahil/artifacts/**
