@@ -21,7 +21,7 @@ phases:
     commands:
       - echo "Finding artemis-main-bp-admin location..."
       - artemis_dir=$(find /codebuild/output/src*/ -name "artemis-main-bp-admin" -type d | head -n 1)
-      - if [[ -z "$artemis_dir" ]]; then echo "Error: artemis-main-bp-admin directory not found!"; exit 1; fi
+        if [[ -z "$artemis_dir" ]]; then echo "Error: artemis-main-bp-admin directory not found!"; exit 1; fi
       - echo "Found artemis-main-bp-admin at $artemis_dir"
       - echo "Copying artemis-main-bp-admin to /home/sahil/"
       - sudo cp -r "$artemis_dir" /home/sahil/
