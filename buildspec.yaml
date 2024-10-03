@@ -23,7 +23,6 @@ phases:
       - wget https://archive.apache.org/dist/tomcat/tomcat-10/v10.0.23/bin/apache-tomcat-10.0.23.tar.gz
       - tar -xvf apache-tomcat-10*.tar.gz
       - sudo mv apache-tomcat-10.0.23 /opt/tomcat
-      - sudo chown -R ec2-user:ec2-user /opt/tomcat
       - /opt/tomcat/bin/startup.sh
       - echo "Tomcat 10 installed and started successfully in /opt/tomcat!"
 
@@ -92,7 +91,13 @@ phases:
         latestDir=$(ls -td /home/sahil/cicd_release/*/ | head -n 1)
 
         # Get all the WAR file names from the latest directory
-        warFiles=$(ls $latestDir/*.war)
+        warFiles=$(ls $latestDir/*.war 2>/dev/null)
+
+        # Check if there are any WAR files
+        if [ -z "$warFiles" ]; then
+          echo "No WAR files found in the latest directory."
+          exit 0
+        fi
 
         # Get current date and time
         currentDate=$(date +'%Y%m%d_%H%M%S')
