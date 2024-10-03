@@ -45,7 +45,7 @@ phases:
         - if [[ ! -f "$gradlewPath" ]]; then
               echo "Error: gradlew not found at $gradlewPath"
               exit 1
-          fi
+            fi
 
           # Copy and set permissions for gradlew
       - sudo cp "$gradlewPath" .
