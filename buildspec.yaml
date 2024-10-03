@@ -1,0 +1,106 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      java: corretto17
+    commands:
+      - echo "Installing dependencies..."
+
+  pre_build:
+    commands:
+      - echo "Preparing to build components..."
+      - echo "Checking Java version:"
+      - java -version
+      - echo "Building and deploying components..."
+      - export COMPONENTS=("crm" "crypto" "bindb" "pgui" "email" "sms" "batch" "pgws" "crmws" "mobile" "si")
+      - export COMPONENT_DIRECTORIES=("pay10-crm" "pay10-crypto" "pay10-bindb" "pay10-pg-ui" "pay10-notification-email" "pay10-notification-sms" "pay10-batchProcessor" "pay10-pg-ws" "pay10-crm-ws" "pay10-mobile")
+      - export COMPONENT_COMMANDS=("clean build -x test" "clean bootWar -x test" "clean build -x test" "clean bootWar -x test" "clean bootWar -x test" "clean bootWar -x test" "clean build -x test" "clean bootWar -x test" "clean build -x test" "clean bootWar -x test")
+
+  build:
+    commands:
+      - |
+        index=0
+        while [ $index -lt ${#COMPONENTS[@]} ]; do
+          component=${COMPONENTS[$index]}
+          componentDirectory=${COMPONENT_DIRECTORIES[$index]}
+          buildCommand=${COMPONENT_COMMANDS[$index]}
+
+          echo "Building and deploying $component component in $componentDirectory"
+
+          # Create the build directory if it doesn't exist
+          sudo mkdir -p /sahil/build/$componentDirectory
+          cd /sahil/build/$componentDirectory || { echo "Failed to change directory to /sahil/build/$componentDirectory"; exit 1; }
+
+          # Use the correct path for gradlew
+          if [[ "$component" == "pgws" ]]; then
+            gradlewPath="$CODEBUILD_SRC_DIR/$componentDirectory/gradlew"
+          else
+            gradlewPath="$CODEBUILD_SRC_DIR/$componentDirectory/gradlew"
+          fi
+
+          # Check if gradlew exists in the specified path
+          if [[ ! -f "$gradlewPath" ]]; then
+            echo "Error: gradlew not found at $gradlewPath"
+            exit 1
+          fi
+
+          # Copy gradlew to the current directory
+          sudo cp "$gradlewPath" .
+          sudo chmod +x gradlew
+
+          echo "Running Gradle command: JAVA_HOME=$JAVA_HOME ./gradlew $buildCommand"
+          if ! JAVA_HOME=$JAVA_HOME ./gradlew $buildCommand; then
+            echo "Gradle build failed for $component. Please check the logs for details."
+            exit 1
+          fi
+
+          # Check for build output
+          if [[ ! -d build/libs ]]; then
+            echo "Error: No build/libs directory found after build command for $component."
+            exit 1
+          fi
+
+          # Move built artifacts to /sahil/artifacts
+          sudo mkdir -p /sahil/artifacts
+          sudo mv build/libs/* /sahil/artifacts/ || echo "Warning: No artifacts found to move for $component."
+
+          index=$((index + 1))
+        done
+
+  post_build:
+    commands:
+      - |
+        if [ -d "/home/sahil/cicd_release/" ]; then
+          echo "Checking for release directories in /home/sahil/cicd_release/"
+          sudo ls -l /home/sahil/cicd_release/ || echo "No release directories found."
+          latestDir=$(sudo ls -td /home/sahil/cicd_release/*/ 2>/dev/null | head -n 1)
+        else
+          echo "No release directories found in /home/sahil/cicd_release/"
+          exit 0
+        fi
+
+        if [ -z "$latestDir" ]; then
+          echo "No release directories found in /home/sahil/cicd_release/"
+          exit 0
+        fi
+
+        warFiles=$(sudo ls "$latestDir"/*.war 2>/dev/null)
+
+        if [ -z "$warFiles" ]; then
+          echo "No WAR files found in the latest directory."
+          exit 0
+        fi
+
+        currentDate=$(date +'%Y%m%d_%H%M%S')
+        backupDir="/home/tom_backup/$currentDate"
+        sudo mkdir -p "$backupDir"
+
+        for warFile in $warFiles; do
+          warFileName=$(basename $warFile)
+          sudo cp -r "/opt/tomcat/webapps/$warFileName" "$backupDir/$warFileName"
+        done
+
+artifacts:
+  files:
+    - /sahil/artifacts/**
