@@ -41,9 +41,6 @@ phases:
            gradlewPath="/home/sahil/artemis-main-bp-admin/$componentDirectory/gradlew"
            wrapperJarPath="/home/sahil/artemis-main-bp-admin/$componentDirectory/gradle/wrapper/gradle-wrapper.jar"
 
-           if [[ ! -f "$gradlewPath" ]]; then echo "Error: gradlew not found at $gradlewPath"; exit 1; fi
-           if [[ ! -f "$wrapperJarPath" ]]; then echo "Error: gradle-wrapper.jar not found."; exit 1; fi
-
            echo "Copying gradlew and wrapper files to the current directory"
            sudo cp "$gradlewPath" .
            sudo cp "$wrapperJarPath" "gradle/wrapper/"
