@@ -34,7 +34,7 @@ phases:
 
           # Use the correct path for pgws
           if [[ "$component" == "pgws" ]]; then
-            componentDirectory="/pay10-pg-ws"
+            componentDirectory="pay10-pg-ws"
           fi
 
           # Check if gradlew exists in the cloned repository path
@@ -48,7 +48,10 @@ phases:
           sudo chmod +x gradlew;
 
           echo "Running Gradle command: JAVA_HOME=$JAVA_HOME ./gradlew $buildCommand"
-          JAVA_HOME=$JAVA_HOME ./gradlew $buildCommand || { echo "Gradle build failed"; exit 1; }
+          if ! JAVA_HOME=$JAVA_HOME ./gradlew $buildCommand; then
+            echo "Gradle build failed for $component. Please check the logs for details.";
+            exit 1;
+          fi
 
           # Check for build output
           if [[ ! -d build/libs ]]; then
@@ -64,22 +67,21 @@ phases:
   post_build:
     commands:
       - echo "Deploying components..."
-      - echo "Checking for release directories in /home/sahil/cicd_release/"
       - if [ -d "/home/sahil/cicd_release/" ]; then
-          sudo ls -l /home/sahil/cicd_release/;
+          echo "Checking for release directories in /home/sahil/cicd_release/"
+          sudo ls -l /home/sahil/cicd_release/ || echo "No release directories found.";
+          latestDir=$(sudo ls -td /home/sahil/cicd_release/*/ 2>/dev/null | head -n 1)
         else
           echo "No release directories found in /home/sahil/cicd_release/";
           exit 0;
         fi
-
-      - latestDir=$(sudo ls -td /home/sahil/cicd_release/*/ 2>/dev/null | head -n 1)
 
       - if [ -z "$latestDir" ]; then
           echo "No release directories found in /home/sahil/cicd_release/";
           exit 0;
         fi
 
-      - warFiles=$(sudo ls $latestDir/*.war 2>/dev/null)
+      - warFiles=$(sudo ls "$latestDir"/*.war 2>/dev/null)
 
       - if [ -z "$warFiles" ]; then
           echo "No WAR files found in the latest directory.";
