@@ -34,11 +34,11 @@ phases:
           echo "Building and deploying $component component in $componentDirectory"
 
           # Create the build directory if it doesn't exist
-          - sudo mkdir -p /sahil/build/$componentDirectory
-          - cd /sahil/build/$componentDirectory || { echo "Failed to change directory to /sahil/build/$componentDirectory"; exit 1; }
+          sudo mkdir -p /sahil/build/$componentDirectory
+          cd /sahil/build/$componentDirectory || { echo "Failed to change directory to /sahil/build/$componentDirectory"; exit 1; }
 
           # Define the path for gradlew
-          - gradlewPath="/home/sahil/artemis-main-bp-admin/$componentDirectory/gradlew"
+          gradlewPath="/home/sahil/artemis-main-bp-admin/$componentDirectory/gradlew"
 
           # Check if gradlew exists in the specified path
           - if [[ ! -f "$gradlewPath" ]]; then
