@@ -98,7 +98,7 @@ phases:
       - sudo mkdir -p "$backupDir"
 
       - for warFile in $warFiles; do
-          warFileName=$(basename $warFile)
+          warFileName=$(basename "$warFile")
           sudo cp -r "/opt/tomcat/webapps/$warFileName" "$backupDir/$warFileName"
         done
 
