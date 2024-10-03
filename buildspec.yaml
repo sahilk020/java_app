@@ -1,50 +1,86 @@
 version: 0.2
 
-env:
-  variables:
-    GITLAB_REPO_URL: "https://github.com/sahilk020/artemis-main-bp-admin.git"
-    S3_BUCKET: "pereprod.sahiltest"
-    AWS_REGION: "eu-central-1"
-    CICD_RELEASES: "/opt/cicd-releases"
-    COMPONENT_DIR: "pay10-pg-ws"
-    BUILD_COMMAND: "clean bootWar -x test"
-
 phases:
   install:
+    runtime-versions:
+      java: corretto8
     commands:
-      - echo "Attempting to install Java via Amazon Linux extras"
-      - amazon-linux-extras install -y java-openjdk11 || {
-          echo "Amazon Linux extras installation failed, downloading Java manually";
-          curl -O https://download.java.net/java/GA/jdk8/latest/binaries/jdk-8u161-linux-x64.tar.gz;
-          tar -xzf jdk-8u161-linux-x64.tar.gz;
-          mv jdk1.8.0_161 /usr/local/;
-          export JAVA_HOME=/usr/local/jdk1.8.0_161;
-          export PATH=$JAVA_HOME/bin:$PATH;
-          echo "Java installed from manual download";
-        }
-      - export JAVA_HOME=${JAVA_HOME:-/usr/lib/jvm/java-11-openjdk}
-      - export PATH=$JAVA_HOME/bin:$PATH
-      - echo "JAVA_HOME set to $JAVA_HOME"
-      - java -version
+      - echo "Installing necessary dependencies..."
+      - yum install -y sshpass
 
   pre_build:
     commands:
-      - echo "Cloning the repository"
-      - git clone $GITLAB_REPO_URL /opt/code
+      - echo "Starting pre-build phase..."
 
   build:
     commands:
-      - echo "Building the project"
-      - cd /opt/code/$COMPONENT_DIR
-      - chmod +x gradlew
-      - ./gradlew $BUILD_COMMAND || { echo "Build failed. Checking for Java issues..."; echo "JAVA_HOME: $JAVA_HOME"; java -version; exit 1; }
+      - echo "Building components..."
+      - |
+        declare -A COMPONENT_DIRECTORIES=(
+          ["crm"]="pay10-crm"
+          ["crypto"]="pay10-crypto"
+          ["bindb"]="pay10-bindb"
+          ["pgui"]="pay10-pg-ui"
+          ["email"]="pay10-notification-email"
+          ["sms"]="pay10-notification-sms"
+          ["batch"]="pay10-batchProcessor"
+          ["pgws"]="pay10-pg-ws"
+          ["crmws"]="pay10-crm-ws"
+          ["mobile"]="pay10-mobile"
+          ["si"]="pay10-SI"
+        )
+        
+        declare -A COMPONENT_COMMANDS=(
+          ["crm"]="clean build -x test"
+          ["crypto"]="clean bootWar -x test"
+          ["bindb"]="clean build -x test"
+          ["pgui"]="clean bootWar -x test"
+          ["email"]="clean bootWar -x test"
+          ["sms"]="clean bootWar -x test"
+          ["batch"]="clean build -x test"
+          ["pgws"]="clean bootWar -x test"
+          ["crmws"]="clean build -x test"
+          ["mobile"]="clean bootWar -x test"
+        )
+
+        for component in $COMPONENTS; do
+          buildCommand=${COMPONENT_COMMANDS[$component]}
+          componentDirectory=${COMPONENT_DIRECTORIES[$component]}
+
+          if [ -n "$buildCommand" ] && [ -n "$componentDirectory" ]; then
+            echo "Building and deploying $component component"
+            cd /var/lib/jenkins/workspace/sonar/$componentDirectory/
+            chmod +x gradlew
+            JAVA_HOME=/usr/lib/jvm/java-1.8.0-amazon-corretto.x86_64/jre ./gradlew $buildCommand
+            mv build/libs/* /home/pay10ar/
+          else
+            echo "Unsupported component: $component" && exit 1
+          fi
+        done
 
   post_build:
     commands:
-      - echo "Preparing to upload to S3"
-      - mkdir -p ${CICD_RELEASES}/$(date +"%Y%m%d_%H%M%S")
-      - mv build/libs/*.war ${CICD_RELEASES}/$(date +"%Y%m%d_%H%M%S")/ || echo "No WAR files found, skipping upload."
+      - echo "Deploying components..."
+      - |
+        # Get the latest created directory in /home/aryan/cicd_release/
+        latestDir=$(ls -td /home/aryan/cicd_release/*/ | head -n 1)
+
+        # Get all the WAR file names from the latest directory
+        warFiles=$(ls $latestDir/*.war)
+
+        # Get current date and time
+        currentDate=$(date +'%Y%m%d_%H%M%S')
+
+        # Create backup directory with current date and time
+        backupDir="/home/tom_backup/$currentDate"
+        mkdir -p "$backupDir"
+
+        # Backup /opt/tomcat/webapps each WAR file to backup directory
+        for warFile in $warFiles; do
+          warFileName=$(basename $warFile)
+          cp -r "/opt/tomcat/webapps/$warFileName" "$backupDir/$warFileName"
+        done
 
 artifacts:
   files:
-    - ${CICD_RELEASES}/*
+    - '**/*'
