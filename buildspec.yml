@@ -40,15 +40,15 @@ phases:
           
         - gradlewPath="/home/sahil/artemis-main-bp-admin/$componentDirectory/gradlew"
 
-          # Check if gradlew exists in the specified path
-          - if [[ ! -f "$gradlewPath" ]]; then
+          
+        - if [[ ! -f "$gradlewPath" ]]; then
               echo "Error: gradlew not found at $gradlewPath"
               exit 1
             fi
 
           # Copy gradlew to the current directory
-          - sudo cp "$gradlewPath" .
-          - sudo chmod +x gradlew
+        - sudo cp "$gradlewPath" .
+        - sudo chmod +x gradlew
 
           echo "Running Gradle command: JAVA_HOME=$JAVA_HOME ./gradlew $buildCommand"
           - if ! JAVA_HOME=$JAVA_HOME ./gradlew $buildCommand; then
