@@ -33,8 +33,8 @@ phases:
 
           echo "Building and deploying $component component in $componentDirectory"
 
-          # Create the build directory if it doesn't exist
-          sudo mkdir -p /sahil/build/$componentDirectory
+         
+        - sudo mkdir -p /sahil/build/$componentDirectory
           cd /sahil/build/$componentDirectory 
           # Define the path for gradlew
           gradlewPath="/home/sahil/artemis-main-bp-admin/$componentDirectory/gradlew"
