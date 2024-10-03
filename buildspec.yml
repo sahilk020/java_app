@@ -65,7 +65,7 @@ phases:
         done
       - sleep 600
 
-      post_build:
+    post_build:
         commands:
           - if [ -d "/home/sahil/cicd_release/" ]; then
               echo "Checking for release directories in /home/sahil/cicd_release/";
