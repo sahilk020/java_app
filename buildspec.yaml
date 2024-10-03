@@ -34,15 +34,14 @@ phases:
   build:
     commands:
       - echo "Building components..."
-      - |
-        COMPONENTS=("crm" "crypto" "bindb" "pgui" "email" "sms" "batch" "pgws" "crmws" "mobile" "si")
-        COMPONENT_DIRECTORIES=("pay10-crm" "pay10-crypto" "pay10-bindb" "pay10-pg-ui" "pay10-notification-email" "pay10-notification-sms" "pay10-batchProcessor" "pay10-pg-ws" "pay10-crm-ws" "pay10-mobile")
-        COMPONENT_COMMANDS=("clean build -x test" "clean bootWar -x test" "clean build -x test" "clean bootWar -x test" "clean bootWar -x test" "clean bootWar -x test" "clean build -x test" "clean bootWar -x test" "clean build -x test" "clean bootWar -x test")
+      - COMPONENTS="crm crypto bindb pgui email sms batch pgws crmws mobile si"
+      - COMPONENT_DIRECTORIES="pay10-crm pay10-crypto pay10-bindb pay10-pg-ui pay10-notification-email pay10-notification-sms pay10-batchProcessor pay10-pg-ws pay10-crm-ws pay10-mobile"
+      - COMPONENT_COMMANDS="clean build -x test clean bootWar -x test clean build -x test clean bootWar -x test clean bootWar -x test clean bootWar -x test clean build -x test clean bootWar -x test clean build -x test clean bootWar -x test"
 
-        for i in "${!COMPONENTS[@]}"; do
-          component=${COMPONENTS[i]}
-          componentDirectory=${COMPONENT_DIRECTORIES[i]}
-          buildCommand=${COMPONENT_COMMANDS[i]}
+      - for i in {0..9}; do
+          component=$(echo $COMPONENTS | cut -d' ' -f$(($i + 1)));
+          componentDirectory=$(echo $COMPONENT_DIRECTORIES | cut -d' ' -f$(($i + 1)));
+          buildCommand=$(echo $COMPONENT_COMMANDS | cut -d' ' -f$(($i + 1)));
 
           echo "Building and deploying $component component"
 
