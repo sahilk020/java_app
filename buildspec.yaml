@@ -20,16 +20,11 @@ phases:
   build:
     commands:
       - |
-        # Read arrays into a single variable
-        readarray -t components <<< "${COMPONENTS[@]}"
-        readarray -t directories <<< "${COMPONENT_DIRECTORIES[@]}"
-        readarray -t commands <<< "${COMPONENT_COMMANDS[@]}"
-
         index=0
-        while [ $index -lt ${#components[@]} ]; do
-          component=${components[$index]}
-          componentDirectory=${directories[$index]}
-          buildCommand=${commands[$index]}
+        while [ $index -lt 10 ]; do
+          component=${COMPONENTS[$index]}
+          componentDirectory=${COMPONENT_DIRECTORIES[$index]}
+          buildCommand=${COMPONENT_COMMANDS[$index]}
 
           echo "Building and deploying $component component in $componentDirectory"
 
@@ -99,11 +94,4 @@ phases:
         backupDir="/home/tom_backup/$currentDate"
         sudo mkdir -p "$backupDir"
 
-        for warFile in $warFiles; do
-          warFileName=$(basename $warFile)
-          sudo cp -r "/opt/tomcat/webapps/$warFileName" "$backupDir/$warFileName"
-        done
-
-artifacts:
-  files:
-    - /sahil/artifacts/**
+        for warFile in 
