@@ -35,39 +35,39 @@ phases:
           echo "Building and deploying $component component in $componentDirectory"
 
           # Create the build directory if it doesn't exist
-          sudo mkdir -p /sahil/build/$componentDirectory
-          cd /sahil/build/$componentDirectory || { echo "Failed to change directory to /sahil/build/$componentDirectory"; exit 1; }
+          - sudo mkdir -p /sahil/build/$componentDirectory
+          - cd /sahil/build/$componentDirectory || { echo "Failed to change directory to /sahil/build/$componentDirectory"; exit 1; }
 
           # Define the path for gradlew
-          gradlewPath="/home/sahil/artemis-main-bp-admin/$componentDirectory/gradlew"
+          - gradlewPath="/home/sahil/artemis-main-bp-admin/$componentDirectory/gradlew"
 
           # Check if gradlew exists in the specified path
-          if [[ ! -f "$gradlewPath" ]]; then
-            echo "Error: gradlew not found at $gradlewPath"
-            exit 1
-          fi
+          - if [[ ! -f "$gradlewPath" ]]; then
+              echo "Error: gradlew not found at $gradlewPath"
+              exit 1
+            fi
 
           # Copy gradlew to the current directory
-          sudo cp "$gradlewPath" .
-          sudo chmod +x gradlew
+          - sudo cp "$gradlewPath" .
+          - sudo chmod +x gradlew
 
           echo "Running Gradle command: JAVA_HOME=$JAVA_HOME ./gradlew $buildCommand"
-          if ! JAVA_HOME=$JAVA_HOME ./gradlew $buildCommand; then
-            echo "Gradle build failed for $component. Please check the logs for details."
-            exit 1
-          fi
+          - if ! JAVA_HOME=$JAVA_HOME ./gradlew $buildCommand; then
+              echo "Gradle build failed for $component. Please check the logs for details."
+              exit 1
+            fi
 
           # Check for build output
-          if [[ ! -d build/libs ]]; then
-            echo "Error: No build/libs directory found after build command for $component."
-            exit 1
-          fi
+          - if [[ ! -d build/libs ]]; then
+              echo "Error: No build/libs directory found after build command for $component."
+              exit 1
+            fi
 
           # Move built artifacts to /sahil/artifacts
-          sudo mkdir -p /sahil/artifacts
-          sudo mv build/libs/* /sahil/artifacts/ || echo "Warning: No artifacts found to move for $component."
+          - sudo mkdir -p /sahil/artifacts
+          - sudo mv build/libs/* /sahil/artifacts/ || echo "Warning: No artifacts found to move for $component."
 
-          index=$((index + 1))
+          - index=$((index + 1))
         done
 
   post_build:
