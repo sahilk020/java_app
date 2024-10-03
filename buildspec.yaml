@@ -33,54 +33,28 @@ phases:
   build:
     commands:
       - echo "Building components..."
-      - |
-        declare -A COMPONENT_DIRECTORIES=(
-          ["crm"]="pay10-crm"
-          ["crypto"]="pay10-crypto"
-          ["bindb"]="pay10-bindb"
-          ["pgui"]="pay10-pg-ui"
-          ["email"]="pay10-notification-email"
-          ["sms"]="pay10-notification-sms"
-          ["batch"]="pay10-batchProcessor"
-          ["pgws"]="pay10-pg-ws"
-          ["crmws"]="pay10-crm-ws"
-          ["mobile"]="pay10-mobile"
-          ["si"]="pay10-SI"
-        )
+      - COMPONENTS=("crm" "crypto" "bindb" "pgui" "email" "sms" "batch" "pgws" "crmws" "mobile" "si")
 
-        declare -A COMPONENT_COMMANDS=(
-          ["crm"]="clean build -x test"
-          ["crypto"]="clean bootWar -x test"
-          ["bindb"]="clean build -x test"
-          ["pgui"]="clean bootWar -x test"
-          ["email"]="clean bootWar -x test"
-          ["sms"]="clean bootWar -x test"
-          ["batch"]="clean build -x test"
-          ["pgws"]="clean bootWar -x test"
-          ["crmws"]="clean build -x test"
-          ["mobile"]="clean bootWar -x test"
-        )
+      # Define build commands and directories using a simple indexed approach
+      - BUILD_COMMANDS=("clean build -x test" "clean bootWar -x test" "clean build -x test" "clean bootWar -x test" "clean bootWar -x test" "clean bootWar -x test" "clean build -x test" "clean bootWar -x test" "clean build -x test" "clean bootWar -x test")
+      - COMPONENT_DIRECTORIES=("pay10-crm" "pay10-crypto" "pay10-bindb" "pay10-pg-ui" "pay10-notification-email" "pay10-notification-sms" "pay10-batchProcessor" "pay10-pg-ws" "pay10-crm-ws" "pay10-mobile")
 
-        for component in $COMPONENTS; do
-          buildCommand=${COMPONENT_COMMANDS[$component]}
-          componentDirectory=${COMPONENT_DIRECTORIES[$component]}
+      - for i in "${!COMPONENTS[@]}"; do
+          component=${COMPONENTS[i]};
+          buildCommand=${BUILD_COMMANDS[i]};
+          componentDirectory=${COMPONENT_DIRECTORIES[i]};
+          echo "Building and deploying $component component";
 
-          if [ -n "$buildCommand" ] && [ -n "$componentDirectory" ]; then
-            echo "Building and deploying $component component"
-            
-            # Create the build directory if it doesn't exist with sudo
-            sudo mkdir -p /sahil/build/$componentDirectory
-            
-            cd /sahil/build/$componentDirectory/  # Change to the new directory
-            sudo chmod +x gradlew
-            JAVA_HOME=$JAVA_HOME ./gradlew $buildCommand
-            
-            # Move built artifacts to /sahil/artifacts
-            sudo mkdir -p /sahil/artifacts  # Ensure the artifacts directory exists
-            sudo mv build/libs/* /sahil/artifacts/
-          else
-            echo "Unsupported component: $component" && exit 1
-          fi
+          # Create the build directory if it doesn't exist with sudo
+          sudo mkdir -p /sahil/build/$componentDirectory;
+          
+          cd /sahil/build/$componentDirectory/  # Change to the new directory
+          sudo chmod +x gradlew;
+          JAVA_HOME=$JAVA_HOME ./gradlew $buildCommand;
+          
+          # Move built artifacts to /sahil/artifacts
+          sudo mkdir -p /sahil/artifacts;  # Ensure the artifacts directory exists
+          sudo mv build/libs/* /sahil/artifacts/;
         done
 
   post_build:
