@@ -63,7 +63,7 @@ phases:
 
           index=$((index + 1))
         done
-        sleep 500
+      - sleep 600
 
   post_build:
     commands:
