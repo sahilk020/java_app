@@ -39,9 +39,9 @@ phases:
       - COMPONENT_COMMANDS="clean build -x test clean bootWar -x test clean build -x test clean bootWar -x test clean bootWar -x test clean bootWar -x test clean build -x test clean bootWar -x test clean build -x test clean bootWar -x test"
 
       - for i in {0..9}; do
-          component=$(echo $COMPONENTS | cut -d' ' -f$(($i + 1)));
-          componentDirectory=$(echo $COMPONENT_DIRECTORIES | cut -d' ' -f$(($i + 1)));
-          buildCommand=$(echo $COMPONENT_COMMANDS | cut -d' ' -f$(($i + 1)));
+          component=$(echo $COMPONENTS | cut -d' ' -f$(($i + 1)))
+          componentDirectory=$(echo $COMPONENT_DIRECTORIES | cut -d' ' -f$(($i + 1)))
+          buildCommand=$(echo $COMPONENT_COMMANDS | cut -d' ' -f$(($i + 1)))
 
           echo "Building and deploying $component component"
 
