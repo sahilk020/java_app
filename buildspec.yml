@@ -34,21 +34,21 @@ phases:
 
           echo "Building and deploying $component component in $componentDirectory"
 
-         
-        - sudo mkdir -p /sahil/build/$componentDirectory
-          cd /sahil/build/$componentDirectory 
-          
-        - gradlewPath="/home/sahil/artemis-main-bp-admin/$componentDirectory/gradlew"
+          # Create build directory
+          - sudo mkdir -p /sahil/build/$componentDirectory
+          - cd /sahil/build/$componentDirectory 
 
-          
-        - if [[ ! -f "$gradlewPath" ]]; then
+          gradlewPath="/home/sahil/artemis-main-bp-admin/$componentDirectory/gradlew"
+
+          # Check for gradlew file
+          - if [[ ! -f "$gradlewPath" ]]; then
               echo "Error: gradlew not found at $gradlewPath"
               exit 1
             fi
 
-          # Copy gradlew to the current directory
-        - sudo cp "$gradlewPath" .
-        - sudo chmod +x gradlew
+          # Copy and set permissions for gradlew
+          - sudo cp "$gradlewPath" .
+          - sudo chmod +x gradlew
 
           echo "Running Gradle command: JAVA_HOME=$JAVA_HOME ./gradlew $buildCommand"
           - if ! JAVA_HOME=$JAVA_HOME ./gradlew $buildCommand; then
@@ -66,7 +66,7 @@ phases:
           - sudo mkdir -p /sahil/artifacts
           - sudo mv build/libs/* /sahil/artifacts/ || echo "Warning: No artifacts found to move for $component."
 
-          - index=$((index + 1))
+          index=$((index + 1))
         done
 
   post_build:
