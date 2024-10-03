@@ -42,10 +42,10 @@ phases:
           gradlewPath="/home/sahil/artemis-main-bp-admin/$componentDirectory/gradlew"
 
           # Check for gradlew file
-        - if [[ ! -f "$gradlewPath" ]]; then
-              echo "Error: gradlew not found at $gradlewPath"
-              exit 1
-            fi
+        if [[ ! -f "$gradlewPath" ]]; then
+          echo "Error: gradlew not found at $gradlewPath"
+          exit 1
+        fi
 
           # Copy and set permissions for gradlew
       - sudo cp "$gradlewPath" .
