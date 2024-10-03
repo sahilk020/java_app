@@ -39,8 +39,7 @@ phases:
       - mkdir -p /sahil/build/$componentDirectory
       - cd /sahil/build/$componentDirectory 
 
-      gradlewPath="/home/sahil/artemis-main-bp-admin/$componentDirectory/gradlew"
-
+      - gradlewPath="/home/sahil/artemis-main-bp-admin/$componentDirectory/gradlew"
           # Check for gradlew file
       if [[ ! -f "$gradlewPath" ]]; then
           echo "Error: gradlew not found at $gradlewPath"
