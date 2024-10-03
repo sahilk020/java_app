@@ -50,12 +50,25 @@ phases:
           sudo mkdir -p /sahil/build/$componentDirectory
           cd /sahil/build/$componentDirectory/
 
+          # Check if gradlew exists
+          if [[ ! -f "../$componentDirectory/gradlew" ]]; then
+            echo "Error: gradlew not found in ../$componentDirectory/"
+            exit 1
+          fi
+
+          sudo cp ../$componentDirectory/gradlew .  # Copy gradlew to the current directory
           sudo chmod +x gradlew
           JAVA_HOME=$JAVA_HOME ./gradlew $buildCommand
 
+          # Check for build output
+          if [[ ! -d build/libs ]]; then
+            echo "Error: No build/libs directory found after build command."
+            exit 1
+          fi
+
           # Move built artifacts to /sahil/artifacts
           sudo mkdir -p /sahil/artifacts  # Ensure the artifacts directory exists
-          sudo mv build/libs/* /sahil/artifacts/
+          sudo mv build/libs/* /sahil/artifacts/ || echo "Warning: No artifacts found to move."
         done
 
   post_build:
