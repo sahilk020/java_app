@@ -35,8 +35,7 @@ phases:
 
           # Create the build directory if it doesn't exist
           sudo mkdir -p /sahil/build/$componentDirectory
-          cd /sahil/build/$componentDirectory || { echo "Failed to change directory to /sahil/build/$componentDirectory"; exit 1; }
-
+          cd /sahil/build/$componentDirectory 
           # Define the path for gradlew
           gradlewPath="/home/sahil/artemis-main-bp-admin/$componentDirectory/gradlew"
 
