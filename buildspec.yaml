@@ -12,14 +12,13 @@ phases:
       - echo "Preparing to build components..."
       - echo "Checking Java version:"
       - java -version
-
-  build:
-    commands:
       - echo "Building and deploying components..."
       - COMPONENTS=("crm" "crypto" "bindb" "pgui" "email" "sms" "batch" "pgws" "crmws" "mobile" "si")
       - COMPONENT_DIRECTORIES=("pay10-crm" "pay10-crypto" "pay10-bindb" "pay10-pg-ui" "pay10-notification-email" "pay10-notification-sms" "pay10-batchProcessor" "pay10-pg-ws" "pay10-crm-ws" "pay10-mobile")
       - COMPONENT_COMMANDS=("clean build -x test" "clean bootWar -x test" "clean build -x test" "clean bootWar -x test" "clean bootWar -x test" "clean bootWar -x test" "clean build -x test" "clean bootWar -x test" "clean build -x test" "clean bootWar -x test")
 
+  build:
+    commands:
       - |
         for i in "${!COMPONENTS[@]}"; do
           component=${COMPONENTS[$i]};
@@ -66,8 +65,8 @@ phases:
 
   post_build:
     commands:
-      - echo "Deploying components..."
-      - if [ -d "/home/sahil/cicd_release/" ]; then
+      - |
+        if [ -d "/home/sahil/cicd_release/" ]; then
           echo "Checking for release directories in /home/sahil/cicd_release/"
           sudo ls -l /home/sahil/cicd_release/ || echo "No release directories found.";
           latestDir=$(sudo ls -td /home/sahil/cicd_release/*/ 2>/dev/null | head -n 1)
@@ -76,23 +75,23 @@ phases:
           exit 0;
         fi
 
-      - if [ -z "$latestDir" ]; then
+        if [ -z "$latestDir" ]; then
           echo "No release directories found in /home/sahil/cicd_release/";
           exit 0;
         fi
 
-      - warFiles=$(sudo ls "$latestDir"/*.war 2>/dev/null)
+        warFiles=$(sudo ls "$latestDir"/*.war 2>/dev/null)
 
-      - if [ -z "$warFiles" ]; then
+        if [ -z "$warFiles" ]; then
           echo "No WAR files found in the latest directory.";
           exit 0;
         fi
 
-      - currentDate=$(date +'%Y%m%d_%H%M%S')
-      - backupDir="/home/tom_backup/$currentDate"
-      - sudo mkdir -p "$backupDir"
+        currentDate=$(date +'%Y%m%d_%H%M%S')
+        backupDir="/home/tom_backup/$currentDate"
+        sudo mkdir -p "$backupDir"
 
-      - for warFile in $warFiles; do
+        for warFile in $warFiles; do
           warFileName=$(basename $warFile);
           sudo cp -r "/opt/tomcat/webapps/$warFileName" "$backupDir/$warFileName";
         done
