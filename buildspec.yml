@@ -6,14 +6,13 @@ phases:
       java: corretto8
     commands:
       - echo "Installing dependencies..."
+      - echo "Checking Java version:"
+      - java -version
 
   pre_build:
     commands:
       - echo "Preparing to build components..."
-      - echo "Checking Java version:"
-      - java -version
       - echo "Building and deploying components..."
-      - git clone https://github.com/sahilk020/artemis-main-bp-admin.git 
       - export COMPONENTS=("crm" "crypto" "bindb" "pgui" "email" "sms" "batch" "pgws" "crmws" "mobile" "si")
       - export COMPONENT_DIRECTORIES=("pay10-crm" "pay10-crypto" "pay10-bindb" "pay10-pg-ui" "pay10-notification-email" "pay10-notification-sms" "pay10-batchProcessor" "pay10-pg-ws" "pay10-crm-ws" "pay10-mobile")
       - export COMPONENT_COMMANDS=("clean build -x test" "clean bootWar -x test" "clean build -x test" "clean bootWar -x test" "clean bootWar -x test" "clean bootWar -x test" "clean build -x test" "clean bootWar -x test" "clean build -x test" "clean bootWar -x test")
@@ -21,82 +20,77 @@ phases:
   build:
     commands:
       - echo "Finding artemis-main-bp-admin location..."
-      - artemis_dir=$(find /codebuild/output/src*/ -name "artemis-main-bp-admin" -type d | head -n 1)  
+      - artemis_dir=$(find /codebuild/output/src*/ -name "artemis-main-bp-admin" -type d | head -n 1)
+      - if [[ -z "$artemis_dir" ]]; then echo "Error: artemis-main-bp-admin directory not found!"; exit 1; fi
       - echo "Found artemis-main-bp-admin at $artemis_dir"
       - echo "Copying artemis-main-bp-admin to /home/sahil/"
       - sudo cp -r "$artemis_dir" /home/sahil/
 
       - index=0
-      - |
+      - 
         while [ $index -lt ${#COMPONENTS[@]} ]; do
           component=${COMPONENTS[$index]}
           componentDirectory=${COMPONENT_DIRECTORIES[$index]}
           buildCommand=${COMPONENT_COMMANDS[$index]}
 
-          echo "Building and deploying $component component in $componentDirectory"
+           echo "Building and deploying $component component in $componentDirectory"
 
-          # Create build directory
-        mkdir -p /sahil/build/$componentDirectory
-        cd /sahil/build/$componentDirectory 
+           sudo mkdir -p /sahil/build/$componentDirectory
+           cd /sahil/build/$componentDirectory || { echo "Failed to change directory to /sahil/build/$componentDirectory"; exit 1; }
 
-        gradlewPath="/home/sahil/artemis-main-bp-admin/$componentDirectory/gradlew"
+           gradlewPath="/home/sahil/artemis-main-bp-admin/$componentDirectory/gradlew"
+           wrapperJarPath="/home/sahil/artemis-main-bp-admin/$componentDirectory/gradle/wrapper/gradle-wrapper.jar"
 
-          # Copy and set permissions for gradlew
-        sudo cp "$gradlewPath" .
-        sudo chmod +x gradlew
+           if [[ ! -f "$gradlewPath" ]]; then echo "Error: gradlew not found at $gradlewPath"; exit 1; fi
+           if [[ ! -f "$wrapperJarPath" ]]; then echo "Error: gradle-wrapper.jar not found."; exit 1; fi
 
-        echo "Running Gradle command: JAVA_HOME=$JAVA_HOME ./gradlew $buildCommand"
-        if ! JAVA_HOME=$JAVA_HOME ./gradlew $buildCommand; then
-              echo "Gradle build failed for $component. Please check the logs for details."
-              exit 1
-          fi
+           echo "Copying gradlew and wrapper files to the current directory"
+           sudo cp "$gradlewPath" .
+           sudo cp "$wrapperJarPath" "gradle/wrapper/"
+           sudo chmod +x gradlew
 
-          # Check for build output
-        if [[ ! -d build/libs ]]; then
-              echo "Error: No build/libs directory found after build command for $component."
-              exit 1
-          fi
+           echo "Running Gradle command: JAVA_HOME=$JAVA_HOME ./gradlew $buildCommand"
+           if ! JAVA_HOME=$JAVA_HOME ./gradlew $buildCommand; then echo "Gradle build failed for $component. Please check the logs for details."; exit 1; fi
 
-          # Move built artifacts to /sahil/artifacts
-        sudo mkdir -p /sahil/artifacts
-        sudo mv build/libs/* /sahil/artifacts/ || echo "Warning: No artifacts found to move for $component."
+           if [[ ! -d build/libs ]]; then echo "Error: No build/libs directory found after build command for $component."; exit 1; fi
 
-          index=$((index + 1))
+           sudo mkdir -p /sahil/artifacts
+           sudo mv build/libs/* /sahil/artifacts/ || echo "Warning: No artifacts found to move for $component."
+
+           index=$((index + 1))
         done
-      - sleep 600
 
-    post_build:
-        commands:
-          - if [ -d "/home/sahil/cicd_release/" ]; then
-              echo "Checking for release directories in /home/sahil/cicd_release/";
-              sudo ls -l /home/sahil/cicd_release/ || echo "No release directories found.";
-              latestDir=$(sudo ls -td /home/sahil/cicd_release/*/ 2>/dev/null | head -n 1);
-            else
-              echo "No release directories found in /home/sahil/cicd_release/";
-              exit 0;
-            fi
+  post_build:
+    commands:
+      - if [ -d "/home/sahil/cicd_release/" ]; then
+          echo "Checking for release directories in /home/sahil/cicd_release/"
+          - sudo ls -l /home/sahil/cicd_release/ || echo "No release directories found."
+          - latestDir=$(sudo ls -td /home/sahil/cicd_release/*/ 2>/dev/null | head -n 1)
+        else
+          echo "No release directories found in /home/sahil/cicd_release/"
+          exit 0
+        fi
 
-          - if [ -z "$latestDir" ]; then
-              echo "No release directories found in /home/sahil/cicd_release/";
-              exit 0;
-            fi
+      - if [ -z "$latestDir" ]; then
+          echo "No release directories found in /home/sahil/cicd_release/"
+          exit 0
+        fi
 
-          - warFiles=$(sudo ls "$latestDir"/*.war 2>/dev/null)
+      - warFiles=$(sudo ls "$latestDir"/*.war 2>/dev/null)
 
-          - if [ -z "$warFiles" ]; then
-              echo "No WAR files found in the latest directory.";
-              exit 0;
-            fi
+      - if [ -z "$warFiles" ]; then
+          echo "No WAR files found in the latest directory."
+          exit 0
+        fi
 
-          - currentDate=$(date +'%Y%m%d_%H%M%S')
-          - backupDir="/home/tom_backup/$currentDate"
-          - sudo mkdir -p "$backupDir"
+      - currentDate=$(date +'%Y%m%d_%H%M%S')
+      - backupDir="/home/tom_backup/$currentDate"
+      - sudo mkdir -p "$backupDir"
 
-          - for warFile in $warFiles; do
-              warFileName=$(basename "$warFile");
-              sudo cp -r "/opt/tomcat/webapps/$warFileName" "$backupDir/$warFileName";
-            done
-
+      - for warFile in $warFiles; do
+          warFileName=$(basename "$warFile")
+          sudo cp -r "/opt/tomcat/webapps/$warFileName" "$backupDir/$warFileName"
+        done
 
 artifacts:
   files:
