@@ -11,6 +11,7 @@ phases:
 
   pre_build:
     commands:
+      - sleep 600
       - echo "Preparing to build components..."
       - echo "Building and deploying components..."
       - clone git https://github.com/sahilk020/artemis-main-bp-admin.git
