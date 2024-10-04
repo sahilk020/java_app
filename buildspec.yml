@@ -35,7 +35,6 @@ phases:
       - export COMPONENT_DIRECTORIES=("pay10-crm" "pay10-crypto" "pay10-bindb" "pay10-pg-ui" "pay10-notification-email" "pay10-notification-sms" "pay10-batchProcessor" "pay10-pg-ws" "pay10-crm-ws" "pay10-mobile")
       - export COMPONENT_COMMANDS=("clean build -x test" "clean bootWar -x test" "clean build -x test" "clean bootWar -x test" "clean bootWar -x test" "clean bootWar -x test" "clean build -x test" "clean bootWar -x test" "clean build -x test" "clean bootWar -x test")
       - echo "Sleeping for 600 seconds to allow services to stabilize..."
-           
 
   build:
     commands:
@@ -60,6 +59,9 @@ phases:
 
           gradlewPath="/sahil/git/artemis-main-bp-admin/$componentDirectory/gradlew"
           wrapperJarPath="/sahil/git/artemis-main-bp-admin/$componentDirectory/gradle/wrapper/gradle-wrapper.jar"
+
+          echo "Creating gradle/wrapper directory if it doesn't exist"
+          sudo mkdir -p gradle/wrapper
 
           echo "Copying gradlew and wrapper files to the current directory"
           sudo cp "$gradlewPath" .
