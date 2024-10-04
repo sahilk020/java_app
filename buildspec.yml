@@ -10,7 +10,8 @@ env:
     GITLAB_REPO_URL: "https://github.com/sahilk020/artemis-main-bp-admin.git"
     S3_BUCKET: "pereprod.sahiltest"                        # Your S3 bucket name
     AWS_REGION: "eu-central-1"     # Your AWS region
-    DATE_TIME: "default_value"                    
+    DATE_TIME: "default_value"  
+    ROLLBACK: "false"                  
 phases:
   install:
     commands:
