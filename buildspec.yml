@@ -1,111 +1,219 @@
 version: 0.2
 
+
+env:
+  secrets-manager:
+    #GITLAB_USERNAME: "arn:aws:secretsmanager:ap-south-1:718962956669:secret:Git-Credential-store-Yp5Xrz:Git_urer"
+    #GITLAB_TOKEN: "arn:aws:secretsmanager:ap-south-1:718962956669:secret:Git-Credential-store-Yp5Xrz:Git_token"
+    GITLAB_REPO_URL: "https://github.com/sahilk020/artemis-main-bp-admin.git"
+  variables:
+    S3_BUCKET: "pereprod.sahiltest"                        # Your S3 bucket name
+    AWS_REGION: "eu-central-1"     # Your AWS region
+    DATE_TIME: "default_value"                    
 phases:
   install:
-    runtime-versions:
-      java: corretto8
     commands:
-      - echo "Installing necessary dependencies..."
-      - yum install -y wget git
-      - echo "Updating the package system..."
-      - dnf update -y
-      - echo "Installing Amazon Corretto 8..."
-      - dnf install -y java-1.8.0-amazon-corretto.x86_64
-      - echo "Checking Java installation..."
-      - java -version
-      - export JAVA_HOME=/usr/lib/jvm/java-1.8.0-amazon-corretto.x86_64/jre
-      - echo "JAVA_HOME is set to $JAVA_HOME"
-      - echo "Cloning the Git repository..."
-      - mkdir -p /sahil/git
-      - git clone https://github.com/sahilk020/artemis-main-bp-admin.git /sahil/git/artemis-main-bp-admin
-      - echo "Downloading and installing Apache Tomcat..."
-      - cd /tmp
-      - wget https://archive.apache.org/dist/tomcat/tomcat-10/v10.0.23/bin/apache-tomcat-10.0.23.tar.gz
-      - tar -xvf apache-tomcat-10*.tar.gz
-      - sudo mv apache-tomcat-10.0.23 /opt/tomcat
-      - sudo chown -R root:root /opt/tomcat
-      - /opt/tomcat/bin/startup.sh
-      - echo "Tomcat 10 installed and started successfully in /opt/tomcat!"
+      - echo "Installing necessary dependencies"
+      - yum install -y git  
+      - echo "Set Date And Time"
+      - DATE_TIME=$(TZ='Asia/Kolkata' date +"%Y%m%d_%H%M%S")
+      - export DATE_TIME                                       
 
   pre_build:
     commands:
-      - echo "Preparing to build components..."
-      - echo "Building and deploying components..."
-      - export COMPONENTS=("crm" "crypto" "bindb" "pgui" "email" "sms" "batch" "pgws" "crmws"  )
-      - export COMPONENT_DIRECTORIES=("pay10-crm" "pay10-crypto" "pay10-bindb" "pay10-pg-ui" "pay10-notification-email" "pay10-notification-sms" "pay10-batchProcessor" "pay10-pg-ws" "pay10-crm-ws" )
-      - export COMPONENT_COMMANDS=("clean build -x test" "clean bootWar -x test" "clean build -x test" "clean bootWar -x test" "clean bootWar -x test" "clean bootWar -x test" "clean build -x test" "clean bootWar -x test" "clean build -x test")
-      - echo "Sleeping for 600 seconds to allow services to stabilize..."
-      
+      - |
+        if [ "$ROLLBACK" == "true" ]; then
+          echo "Rollback mode detected. Retrieving the latest backup from S3.";
+
+          # Step 1: Split the COMPONENTS variable into an array
+          IFS=',' read -ra COMPONENTS <<< "$COMPONENT"
+          
+          mkdir -p /opt/deployment-artifact/  # Create a directory to store the WAR files
+
+          # Step 2: Iterate over each component
+          for COMPONENT in "${COMPONENTS[@]}"; do
+              echo "Processing component: $COMPONENT"
+
+              # Step 3: List all component WAR files in S3 and sort to find the latest
+              LATEST_COMPONENT=$(aws s3 ls s3://$S3_BUCKET/backup/ --recursive | grep "${COMPONENT}.war" | sort | tail -n 1)
+
+              # Step 4: Check if a WAR file was found for the component
+              if [ -z "$LATEST_COMPONENT" ]; then
+                  echo "No backup found for component $COMPONENT. Skipping..."
+                  continue
+              fi
+
+              # Extract the full S3 path to the latest WAR file
+              LATEST_COMPONENT_PATH=$(echo "$LATEST_COMPONENT" | awk '{print $4}')
+              
+              echo "Latest backup for component $COMPONENT found at: $LATEST_COMPONENT_PATH"
+
+              # Step 5: Download the WAR file for the specific component from the latest backup directory
+              aws s3 cp s3://$S3_BUCKET/$LATEST_COMPONENT_PATH /opt/deployment-artifact/
+
+              if [ $? -ne 0 ]; then
+                  echo "Failed to retrieve WAR file for $COMPONENT. Skipping..."
+                  continue
+              fi
+
+              echo "WAR file for $COMPONENT successfully retrieved and stored in /opt/deployment-artifact/"
+          done
+
+          # Step 6: Check if we have downloaded any components
+          if [ -z "$(ls -A /opt/deployment-artifact/)" ]; then
+              echo "No WAR files downloaded for any components. Exiting rollback."
+              exit 1
+          fi
 
 
+
+
+
+          
+          # # Find the latest backup folder from S3
+          # LATEST_BACKUP=$(aws s3 ls s3://$S3_BUCKET/backup/ --recursive | sort | tail -n 1 | awk '{print $4}' | cut -d "/" -f 2);
+          # echo "Latest backup folder: $LATEST_BACKUP";
+
+          echo "Preparing deployment artifact for CodeDeploy"
+         # download code-deploy files form s3 buckets.
+          aws s3 cp s3://$S3_BUCKET/codedeploy-files /opt/code/codedeploy-files --region $AWS_REGION --recursive 
+
+          # # Copy the WAR files from the latest backup to the deployment directory
+          # aws s3 cp s3://$S3_BUCKET/backup/$LATEST_BACKUP/ /opt/deployment-artifact/ --recursive;
+
+          echo "Preparing deployment artifact for CodeDeploy"
+          cp -r  /opt/code/codedeploy-files/appspec.yml /opt/code/codedeploy-files/scripts/* /opt/deployment-artifact/
+
+
+          # Confirm the files have been copied
+          ls /opt/deployment-artifact/;
+
+        else
+
+           echo "put parameter from ssm"
+           aws ssm put-parameter --name "COMPONENT_FOR_BACKUP" --value "${COMPONENT}" --type "String" --overwrite
+           echo "Cloning the repository from Github"
+           git clone -b https://github.com/sahilk020/artemis-main-bp-admin.git /opt/code  # Clone the specified branch
+           cd /opt/code/                                          # Navigate to the cloned repo
+           
+        fi
   build:
     commands:
-      - echo "Finding artemis-main-bp-admin location..."
-      - artemis_dir=$(find /codebuild/output/src*/ -name "artemis-main-bp-admin" -type d | head -n 1)
-      - if [[ -z "$artemis_dir" ]]; then echo "Error:artemis-main-bp-admin directory not found!"; exit 1; fi
-      - echo "Found artemis-main-bp-admin at $artemis_dir"
-      - echo "Copying artemis-main-bp-admin to /home/sahil/"
-      - sudo cp -r "$artemis_dir" /home/sahil/
-
-      - echo "Building components..."
       - |
-        for index in ${!COMPONENTS[@]}; do
-          component=${COMPONENTS[$index]}
-          componentDirectory=${COMPONENT_DIRECTORIES[$index]}
-          buildCommand=${COMPONENT_COMMANDS[$index]}
 
-          echo "Building and deploying $component component in $componentDirectory"
+        if [ "$ROLLBACK" == "true" ]; then
+          echo "Rollback mode detected, skipping the build phase.";
+          exit 0;
+        fi
+        echo "Setting JAVA_HOME"
+        export JAVA_HOME=/usr/lib/jvm/java-1.8.0-amazon-corretto.x86_64/jre/
+        mkdir -p /opt/cicd-releases/
+        IFS=',' read -ra COMPONENTS <<< "$COMPONENT"
+        for component in "${COMPONENTS[@]}"; do
+          echo "Building component:$component"
+          if [[ "$component" == "crm" ]]; then
+            cd /opt/code/bestpay-crm
+            chmod +x gradlew
+            ./gradlew clean build -x test
+            mv build/libs/*.war /opt/cicd-releases/
 
-          sudo mkdir -p /sahil/build/$componentDirectory
-          cd /sahil/build/$componentDirectory || { echo "Failed to change directory to /sahil/build/$componentDirectory"; exit 1; }
+          elif [[ "$component" == "crypto" ]]; then
+            cd /opt/code/bestpay-crypto
+            chmod +x gradlew
+            ./gradlew clean bootWar -x test
+            mv build/libs/*.war /opt/cicd-releases/
+            
+          elif [[ "$component" == "bindb" ]]; then
+            cd /opt/code/bestpay-bindb
+            chmod +x gradlew
+            ./gradlew clean build -x test
+            mv build/libs/*.war /opt/cicd-releases/
 
-          gradlewPath="/sahil/git/artemis-main-bp-admin/$componentDirectory/gradlew"
-          wrapperJarPath="/sahil/git/artemis-main-bp-admin/$componentDirectory/gradle/wrapper/gradle-wrapper.jar"
+          elif [[ "$component" == "pgui" ]]; then
+            cd /opt/code/bestpay-pg-ui
+            chmod +x gradlew
+            ./gradlew clean bootWar -x test
+            mv build/libs/*.war /opt/cicd-releases/
 
-          echo "Copying gradlew and wrapper files to the current directory"
-          sudo cp -r "$gradlewPath" .
-          sudo mkdir -p gradle/wrapper  # Ensure the directory exists
-          sudo cp -r "$wrapperJarPath" "gradle/wrapper/"
-          sudo chmod +x gradlew
+          elif [[ "$component" == "email" ]]; then
+            cd /opt/code/bestpay-notification-email
+            chmod +x gradlew
+            ./gradlew clean bootWar -x test
+            mv build/libs/*.war /opt/cicd-releases/
 
-          echo "Executing build command: ./gradlew $buildCommand"
+          elif [[ "$component" == "sms" ]]; then
+            cd /opt/code/bestpay-notification-sms
+            chmod +x gradlew
+            ./gradlew clean bootWar -x test
+            mv build/libs/*.war /opt/cicd-releases/
+
+          elif [[ "$component" == "batch" ]]; then
+            cd /opt/code/bestpay-batchProcessor
+            chmod +x gradlew
+            ./gradlew clean build -x test
+            mv build/libs/*.war /opt/cicd-releases/
+          elif [[ "$component" == "pgws" ]]; then
+            cd /opt/code/bestpay-pg-ws
+            chmod +x gradlew
+            ./gradlew clean bootWar -x test
+            mv build/libs/*.war /opt/cicd-releases/
+          elif [[ "$component" == "crmws" ]]; then
+            cd /opt/code/bestpay-crm-ws
+            chmod +x gradlew
+            ./gradlew clean build -x test
+            mv build/libs/*.war /opt/cicd-releases/
+
+          elif [[ "$component" == "mobile" ]]; then
+            cd /opt/code/pay10-mobile
+            chmod +x gradlew
+            ./gradlew clean bootWar -x test
+            mv build/libs/*.war /opt/cicd-releases/
+
+          elif [[ "$component" == "si" ]]; then
+            cd /opt/code/pay10-SI
+            chmod +x gradlew
+            ./gradlew clean build -x test
+            mv build/libs/*.war /opt/cicd-releases/
+
+          else
+            echo "Unknown component:$component"
+            exit 1
+          fi
+          echo "Build for $component completed"
         done
 
-      - sudo mkdir -p /sahil/artifacts
-      - sudo mv /sahil/build/*/build/libs/* /sahil/artifacts/ || echo "Warning:No artifacts found to move."
 
   post_build:
     commands:
-      - echo "Checking for release directories in /home/sahil/cicd_release/"
-      - if [ -d "/home/sahil/cicd_release/" ]; then
-          sudo ls -l /home/sahil/cicd_release/ || echo "No release directories found."
-          latestDir=$(sudo ls -td /home/sahil/cicd_release/*/ 2>/dev/null | head -n 1)
-        else
-          echo "No release directories found in /home/sahil/cicd_release/"
-          exit 0
-        fi
+      - |
+         if [ "$ROLLBACK" == "true" ]; then
+          echo "Rollback mode detected, skipping the post_build phase.";
+          exit 0;
+         fi
+         echo "Preparing and uploading WAR files to S3"
+         aws s3 cp /opt/cicd-releases/ s3://$S3_BUCKET/cicd-releases/${DATE_TIME}/ --region $AWS_REGION --recursive
+         aws s3 cp /opt/cicd-releases/ s3://$S3_BUCKET/autoscaling-war/ --region $AWS_REGION --recursive
+         echo "WAR files uploaded to S3 successfully"
 
-      - if [ -z "$latestDir" ]; then
-          echo "No release directories found in /home/sahil/cicd_release/"
-          exit 0
-        fi
+         echo "Preparing deployment artifact for CodeDeploy"
+         # download code-deploy files form s3 buckets.
+         aws s3 cp s3://$S3_BUCKET/codedeploy-files /opt/code/codedeploy-files --region $AWS_REGION --recursive 
 
-      - warFiles=$(sudo ls "$latestDir"/*.war 2>/dev/null)
+         # Create deployment directory for the artifact
+         mkdir -p /opt/deployment-artifact/
 
-      - if [ -z "$warFiles" ]; then
-          echo "No WAR files found in the latest directory."
-          exit 0
-        fi
+         # Copy the WAR or component output and the appspec.yml and scripts to the artifact directory
+         cp -r /opt/cicd-releases/*.war /opt/code/codedeploy-files/appspec.yml /opt/code/codedeploy-files/scripts/* /opt/deployment-artifact/
+  
+         ls /opt/code/codedeploy-files/
+         cd /opt/deployment-artifact/
+         ls 
 
-      - currentDate=$(date +'%Y%m%d_%H%M%S')
-      - backupDir="/home/tom_backup/$currentDate"
-      - sudo mkdir -p "$backupDir"
-
-      - for warFile in $warFiles; do
-          warFileName=$(basename "$warFile")
-          sudo cp -r "$warFile" "$backupDir/$warFileName"
-        done
 
 artifacts:
   files:
-    - /sahil/artifacts/**
+    - /opt/deployment-artifact/*
+    - /opt/code/codedeploy-files/appspec.yml   # Explicitly include appspec.yml
+    - /opt/code/codedeploy-files/scripts/*     # Include any required scripts for deployment
+  name: codeBuildArtifacts
+  discard-paths: yes
