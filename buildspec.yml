@@ -35,7 +35,7 @@ phases:
       - export COMPONENT_DIRECTORIES=("pay10-crm" "pay10-crypto" "pay10-bindb" "pay10-pg-ui" "pay10-notification-email" "pay10-notification-sms" "pay10-batchProcessor" "pay10-pg-ws" "pay10-crm-ws" "pay10-mobile")
       - export COMPONENT_COMMANDS=("clean build -x test" "clean bootWar -x test" "clean build -x test" "clean bootWar -x test" "clean bootWar -x test" "clean bootWar -x test" "clean build -x test" "clean bootWar -x test" "clean build -x test" "clean bootWar -x test")
       - echo "Sleeping for 600 seconds to allow services to stabilize..."
-      - sleep 600
+      
 
   build:
     commands:
