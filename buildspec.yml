@@ -59,8 +59,8 @@ phases:
           sudo mkdir -p /sahil/build/$componentDirectory
           cd /sahil/build/$componentDirectory || { echo "Failed to change directory to /sahil/build/$componentDirectory"; exit 1; }
 
-          gradlewPath="/sahil/artemis-main-bp-admin/$componentDirectory/gradlew"
-          wrapperJarPath="/sahil/artemis-main-bp-admin/$componentDirectory/gradle/wrapper/gradle-wrapper.jar"
+          gradlewPath="/sahil/git/artemis-main-bp-admin/$componentDirectory/gradlew"
+          wrapperJarPath="/sahil/git/artemis-main-bp-admin/$componentDirectory/gradle/wrapper/gradle-wrapper.jar"
 
           echo "Copying gradlew and wrapper files to the current directory"
           sudo cp "$gradlewPath" .
