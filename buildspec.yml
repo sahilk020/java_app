@@ -27,7 +27,8 @@ phases:
       - sudo cp -r "$artemis_dir" /home/sahil/
 
       - index=0
-      - while [ $index -lt ${#COMPONENTS[@]} ]; do
+      - 
+        while [ $index -lt ${#COMPONENTS[@]} ]; do
           component=${COMPONENTS[$index]}
           componentDirectory=${COMPONENT_DIRECTORIES[$index]}
           buildCommand=${COMPONENT_COMMANDS[$index]}
@@ -49,7 +50,7 @@ phases:
             echo "Gradle build failed for $component. Please check the logs for details."
             exit 1
           fi
-          
+
 
           sudo mkdir -p /sahil/artifacts
           sudo mv build/libs/* /sahil/artifacts/ || echo "Warning: No artifacts found to move for $component."
