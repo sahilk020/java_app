@@ -89,13 +89,13 @@ phases:
           # Confirm the files have been copied
           ls /opt/deployment-artifact/;
 
-        else
+        #else
 
-           echo "put parameter from ssm"
-           aws ssm put-parameter --name "COMPONENT_FOR_BACKUP" --value "${COMPONENT}" --type "String" --overwrite
-           echo "Cloning the repository from Github"
-           git clone -b https://github.com/sahilk020/artemis-main-bp-admin.git /opt/code  # Clone the specified branch
-           cd /opt/code/                                          # Navigate to the cloned repo
+        #   echo "put parameter from ssm"
+         #  aws ssm put-parameter --name "COMPONENT_FOR_BACKUP" --value "${COMPONENT}" --type "String" --overwrite
+          # echo "Cloning the repository from Github"
+           #git clone -b https://github.com/sahilk020/artemis-main-bp-admin.git /opt/code  # Clone the specified branch
+           #cd /opt/code/                                          # Navigate to the cloned repo
            
         fi
   build:
