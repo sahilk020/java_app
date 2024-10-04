@@ -5,9 +5,27 @@ phases:
     runtime-versions:
       java: corretto8
     commands:
-      - echo "Installing dependencies..."
-      - echo "Checking Java version:"
+      - echo "Installing necessary dependencies..."
+      - yum install -y wget git
+      - echo "Updating the package system..."
+      - dnf update -y
+      - echo "Installing Amazon Corretto 8..."
+      - dnf install -y java-1.8.0-amazon-corretto.x86_64
+      - echo "Checking Java installation..."
       - java -version
+      - export JAVA_HOME=/usr/lib/jvm/java-1.8.0-amazon-corretto.x86_64/jre
+      - echo "JAVA_HOME is set to $JAVA_HOME"
+      - echo "Cloning the Git repository..."
+      - mkdir -p /sahil/git
+      - git clone https://github.com/sahilk020/artemis-main-bp-admin.git /sahil/git/artemis-main-bp-admin
+      - echo "Downloading and installing Apache Tomcat..."
+      - cd /tmp
+      - wget https://archive.apache.org/dist/tomcat/tomcat-10/v10.0.23/bin/apache-tomcat-10.0.23.tar.gz
+      - tar -xvf apache-tomcat-10*.tar.gz
+      - sudo mv apache-tomcat-10.0.23 /opt/tomcat
+      - sudo chown -R ec2-user:ec2-user /opt/tomcat
+      - /opt/tomcat/bin/startup.sh
+      - echo "Tomcat 10 installed and started successfully in /opt/tomcat!"
 
   pre_build:
     commands:
@@ -19,9 +37,6 @@ phases:
 
   build:
     commands:
-      - git clone https://github.com/sahilk020/artemis-main-bp-admin.git
-      - sleep 600
-
       - echo "Finding artemis-main-bp-admin location..."
       - artemis_dir=$(find /codebuild/output/src*/ -name "artemis-main-bp-admin" -type d | head -n 1)
       - if [[ -z "$artemis_dir" ]]; then echo "Error: artemis-main-bp-admin directory not found!"; exit 1; fi
