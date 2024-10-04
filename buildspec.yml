@@ -19,7 +19,7 @@ phases:
 
   build:
     commands:
-      - git clone  https://github.com/sahilk020/artemis-main-bp-admin.git
+      - git clone https://github.com/sahilk020/artemis-main-bp-admin.git
       - sleep 600
 
       - echo "Finding artemis-main-bp-admin location..."
@@ -30,8 +30,7 @@ phases:
       - sudo cp -r "$artemis_dir" /home/sahil/
 
       - index=0
-      - 
-        while [ $index -lt ${#COMPONENTS[@]} ]; do
+      - while [ $index -lt ${#COMPONENTS[@]} ]; do
           component=${COMPONENTS[$index]}
           componentDirectory=${COMPONENT_DIRECTORIES[$index]}
           buildCommand=${COMPONENT_COMMANDS[$index]}
@@ -53,12 +52,12 @@ phases:
             echo "Gradle build failed for $component. Please check the logs for details."
             exit 1
           fi
-          
 
           index=$((index + 1))
         done
+
       - sudo mkdir -p /sahil/artifacts
-      - sudo mv build/libs/* /sahil/artifacts/ || echo "Warning: No artifacts found to move for $component."
+      - sudo mv /sahil/build/*/build/libs/* /sahil/artifacts/ || echo "Warning: No artifacts found to move."
 
   post_build:
     commands:
