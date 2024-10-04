@@ -62,9 +62,9 @@ phases:
           wrapperJarPath="/sahil/git/artemis-main-bp-admin/$componentDirectory/gradle/wrapper/gradle-wrapper.jar"
 
           echo "Copying gradlew and wrapper files to the current directory"
-          sudo cp "$gradlewPath" .
+          sudo cp -r "$gradlewPath" .
           sudo mkdir -p gradle/wrapper  # Ensure the directory exists
-          sudo cp "$wrapperJarPath" "gradle/wrapper/"
+          sudo cp -r "$wrapperJarPath" "gradle/wrapper/"
           sudo chmod +x gradlew
 
           echo "Executing build command: ./gradlew $buildCommand"
