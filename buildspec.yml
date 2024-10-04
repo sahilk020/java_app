@@ -27,42 +27,46 @@ phases:
       - sudo cp -r "$artemis_dir" /home/sahil/
 
       - index=0
-      - 
-        while [ $index -lt ${#COMPONENTS[@]} ]; do
+      - while [ $index -lt ${#COMPONENTS[@]} ]; do
           component=${COMPONENTS[$index]}
           componentDirectory=${COMPONENT_DIRECTORIES[$index]}
           buildCommand=${COMPONENT_COMMANDS[$index]}
 
-           echo "Building and deploying $component component in $componentDirectory"
+          echo "Building and deploying $component component in $componentDirectory"
 
-           sudo mkdir -p /sahil/build/$componentDirectory
-           cd /sahil/build/$componentDirectory || { echo "Failed to change directory to /sahil/build/$componentDirectory"; exit 1; }
+          sudo mkdir -p /sahil/build/$componentDirectory
+          cd /sahil/build/$componentDirectory || { echo "Failed to change directory to /sahil/build/$componentDirectory"; exit 1; }
 
-           gradlewPath="/home/sahil/artemis-main-bp-admin/$componentDirectory/gradlew"
-           wrapperJarPath="/home/sahil/artemis-main-bp-admin/$componentDirectory/gradle/wrapper/gradle-wrapper.jar"
+          gradlewPath="/home/sahil/artemis-main-bp-admin/$componentDirectory/gradlew"
+          wrapperJarPath="/home/sahil/artemis-main-bp-admin/$componentDirectory/gradle/wrapper/gradle-wrapper.jar"
 
-           echo "Copying gradlew and wrapper files to the current directory"
-           sudo cp "$gradlewPath" .
-           sudo cp "$wrapperJarPath" "gradle/wrapper/"
-           sudo chmod +x gradlew
+          echo "Copying gradlew and wrapper files to the current directory"
+          sudo cp "$gradlewPath" .
+          sudo cp "$wrapperJarPath" "gradle/wrapper/"
+          sudo chmod +x gradlew
 
-           echo "Running Gradle command: JAVA_HOME=$JAVA_HOME ./gradlew $buildCommand"
-           if ! JAVA_HOME=$JAVA_HOME ./gradlew $buildCommand; then echo "Gradle build failed for $component. Please check the logs for details."; exit 1; fi
+          if ! JAVA_HOME=$JAVA_HOME ./gradlew $buildCommand; then
+            echo "Gradle build failed for $component. Please check the logs for details."
+            exit 1
+          fi
 
-           if [[ ! -d build/libs ]]; then echo "Error: No build/libs directory found after build command for $component."; exit 1; fi
+          if [[ ! -d build/libs ]]; then
+            echo "Error: No build/libs directory found after build command for $component."
+            exit 1
+          fi
 
-           sudo mkdir -p /sahil/artifacts
-           sudo mv build/libs/* /sahil/artifacts/ || echo "Warning: No artifacts found to move for $component."
+          sudo mkdir -p /sahil/artifacts
+          sudo mv build/libs/* /sahil/artifacts/ || echo "Warning: No artifacts found to move for $component."
 
-           index=$((index + 1))
+          index=$((index + 1))
         done
 
   post_build:
     commands:
       - if [ -d "/home/sahil/cicd_release/" ]; then
           echo "Checking for release directories in /home/sahil/cicd_release/"
-          - sudo ls -l /home/sahil/cicd_release/ || echo "No release directories found."
-          - latestDir=$(sudo ls -td /home/sahil/cicd_release/*/ 2>/dev/null | head -n 1)
+          sudo ls -l /home/sahil/cicd_release/ || echo "No release directories found."
+          latestDir=$(sudo ls -td /home/sahil/cicd_release/*/ 2>/dev/null | head -n 1)
         else
           echo "No release directories found in /home/sahil/cicd_release/"
           exit 0
