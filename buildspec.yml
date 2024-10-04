@@ -73,7 +73,7 @@ phases:
         done
 
       - sudo mkdir -p /sahil/artifacts
-      - sudo mv /sahil/build/*/build/libs/* /sahil/artifacts/ || echo "Warning: No artifacts found to move."
+      - sudo mv /sahil/build/*/build/libs/* /sahil/artifacts/ || echo "Warning:No artifacts found to move."
 
   post_build:
     commands:
