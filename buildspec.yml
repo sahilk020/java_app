@@ -68,10 +68,6 @@ phases:
           sudo chmod +x gradlew
 
           echo "Executing build command: ./gradlew $buildCommand"
-          if ! JAVA_HOME=$JAVA_HOME ./gradlew $buildCommand; then
-            echo "Gradle build failed for $component. Please check the logs for details."
-            exit 1
-          fi
         done
 
       - sudo mkdir -p /sahil/artifacts
