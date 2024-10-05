@@ -1,17 +1,12 @@
 version: 0.2
 
 
-env:
-  
-    #GITLAB_USERNAME: "arn:aws:secretsmanager:ap-south-1:718962956669:secret:Git-Credential-store-Yp5Xrz:Git_urer"
-    #GITLAB_TOKEN: "arn:aws:secretsmanager:ap-south-1:718962956669:secret:Git-Credential-store-Yp5Xrz:Git_token"
-    
+env:  
   variables:
     GITLAB_REPO_URL: "https://github.com/sahilk020/artemis-main-bp-admin.git"
     S3_BUCKET: "pereprod.sahiltest"                        # Your S3 bucket name
     AWS_REGION: "eu-central-1"     # Your AWS region
-    DATE_TIME: "default_value"  
-    ROLLBACK: "false"                  
+    DATE_TIME: "default_value"                    
 phases:
   install:
     commands:
@@ -23,162 +18,90 @@ phases:
 
   pre_build:
     commands:
-      - |
-        if [ "$ROLLBACK" == "true" ]; then
-          echo "Rollback mode detected. Retrieving the latest backup from S3.";
-
-          # Step 1: Split the COMPONENTS variable into an array
-          IFS=',' read -ra COMPONENTS <<< "$COMPONENT"
-          
-          mkdir -p /opt/deployment-artifact/  # Create a directory to store the WAR files
-
-          # Step 2: Iterate over each component
-          for COMPONENT in "${COMPONENTS[@]}"; do
-              echo "Processing component: $COMPONENT"
-
-              # Step 3: List all component WAR files in S3 and sort to find the latest
-              LATEST_COMPONENT=$(aws s3 ls s3://$S3_BUCKET/backup/ --recursive | grep "${COMPONENT}.war" | sort | tail -n 1)
-
-              # Step 4: Check if a WAR file was found for the component
-              if [ -z "$LATEST_COMPONENT" ]; then
-                  echo "No backup found for component $COMPONENT. Skipping..."
-                  continue
-              fi
-
-              # Extract the full S3 path to the latest WAR file
-              LATEST_COMPONENT_PATH=$(echo "$LATEST_COMPONENT" | awk '{print $4}')
-              
-              echo "Latest backup for component $COMPONENT found at: $LATEST_COMPONENT_PATH"
-
-              # Step 5: Download the WAR file for the specific component from the latest backup directory
-              aws s3 cp s3://$S3_BUCKET/$LATEST_COMPONENT_PATH /opt/deployment-artifact/
-
-              if [ $? -ne 0 ]; then
-                  echo "Failed to retrieve WAR file for $COMPONENT. Skipping..."
-                  continue
-              fi
-
-              echo "WAR file for $COMPONENT successfully retrieved and stored in /opt/deployment-artifact/"
-          done
-
-          # Step 6: Check if we have downloaded any components
-          if [ -z "$(ls -A /opt/deployment-artifact/)" ]; then
-              echo "No WAR files downloaded for any components. Exiting rollback."
-              exit 1
-          fi
-
-
-
-
-
-          
-          # # Find the latest backup folder from S3
-          # LATEST_BACKUP=$(aws s3 ls s3://$S3_BUCKET/backup/ --recursive | sort | tail -n 1 | awk '{print $4}' | cut -d "/" -f 2);
-          # echo "Latest backup folder: $LATEST_BACKUP";
-
-          echo "Preparing deployment artifact for CodeDeploy"
-         # download code-deploy files form s3 buckets.
-          aws s3 cp s3://$S3_BUCKET/codedeploy-files /opt/code/codedeploy-files --region $AWS_REGION --recursive 
-
-          # # Copy the WAR files from the latest backup to the deployment directory
-          # aws s3 cp s3://$S3_BUCKET/backup/$LATEST_BACKUP/ /opt/deployment-artifact/ --recursive;
-
-          echo "Preparing deployment artifact for CodeDeploy"
-          cp -r  /opt/code/codedeploy-files/appspec.yml /opt/code/codedeploy-files/scripts/* /opt/deployment-artifact/
-
-
-          # Confirm the files have been copied
-          ls /opt/deployment-artifact/;
-
-        #else
-
-        #   echo "put parameter from ssm"
-         #  aws ssm put-parameter --name "COMPONENT_FOR_BACKUP" --value "${COMPONENT}" --type "String" --overwrite
-          # echo "Cloning the repository from Github"
-           #git clone -b https://github.com/sahilk020/artemis-main-bp-admin.git /opt/code  # Clone the specified branch
-           #cd /opt/code/                                          # Navigate to the cloned repo
-           
-        fi
+      - echo "Using branch ${GIT_BRANCH}"
+      - echo "Using components ${COMPONENT}"
+      - echo "Cloning repository from branch ${GIT_BRANCH}"
+      - git clone https://github.com/sahilk020/artemis-main-bp-admin.git
+      - ls -la
+      - echo "Ready to deploy components"
+      - mkdir /opt/warfile
   build:
     commands:
       - |
-
-        if [ "$ROLLBACK" == "true" ]; then
-          echo "Rollback mode detected, skipping the build phase.";
-          exit 0;
-        fi
         echo "Setting JAVA_HOME"
-        export JAVA_HOME=/usr/lib/jvm/java-1.8.0-amazon-corretto.x86_64/jre/
-        mkdir -p /opt/cicd-releases/
+        export JAVA_HOME=/usr/lib/jvm/java-1.8.0-amazon-corretto.x86_64
+
         IFS=',' read -ra COMPONENTS <<< "$COMPONENT"
         for component in "${COMPONENTS[@]}"; do
-          echo "Building component:$component"
+          echo "Building component: $component"
           if [[ "$component" == "crm" ]]; then
-            cd /opt/code/bestpay-crm
+            cd pay10-crm
             chmod +x gradlew
             ./gradlew clean build -x test
-            mv build/libs/*.war /opt/cicd-releases/
-
+            cp build/libs/*.war  /opt/warfile
+            cd ..
           elif [[ "$component" == "crypto" ]]; then
-            cd /opt/code/bestpay-crypto
+            cd pay10-crypto
             chmod +x gradlew
             ./gradlew clean bootWar -x test
-            mv build/libs/*.war /opt/cicd-releases/
-            
+            cp build/libs/*.war  /opt/warfile
+            cd ..
           elif [[ "$component" == "bindb" ]]; then
-            cd /opt/code/bestpay-bindb
+            cd pay10-bindb
             chmod +x gradlew
             ./gradlew clean build -x test
-            mv build/libs/*.war /opt/cicd-releases/
-
+            cp build/libs/*.war  /opt/warfile
+            cd ..
           elif [[ "$component" == "pgui" ]]; then
-            cd /opt/code/bestpay-pg-ui
+            cd pay10-pg-ui
             chmod +x gradlew
             ./gradlew clean bootWar -x test
-            mv build/libs/*.war /opt/cicd-releases/
-
+            cp build/libs/*.war  /opt/warfile
+            cd ..
           elif [[ "$component" == "email" ]]; then
-            cd /opt/code/bestpay-notification-email
+            cd pay10-notification-email
             chmod +x gradlew
             ./gradlew clean bootWar -x test
-            mv build/libs/*.war /opt/cicd-releases/
-
+            cp build/libs/*.war  /opt/warfile
+            cd ..
           elif [[ "$component" == "sms" ]]; then
-            cd /opt/code/bestpay-notification-sms
+            cd pay10-notification-sms
             chmod +x gradlew
             ./gradlew clean bootWar -x test
-            mv build/libs/*.war /opt/cicd-releases/
-
+            cp build/libs/*.war  /opt/warfile
+            cd ..
           elif [[ "$component" == "batch" ]]; then
-            cd /opt/code/bestpay-batchProcessor
+            cd pay10-batchProcessor
             chmod +x gradlew
             ./gradlew clean build -x test
-            mv build/libs/*.war /opt/cicd-releases/
+            cp build/libs/*.war  /opt/warfile
+            cd ..
           elif [[ "$component" == "pgws" ]]; then
-            cd /opt/code/bestpay-pg-ws
+            cd pay10-pg-ws
             chmod +x gradlew
             ./gradlew clean bootWar -x test
-            mv build/libs/*.war /opt/cicd-releases/
+            cp build/libs/*.war  /opt/warfile
+            cd ..
           elif [[ "$component" == "crmws" ]]; then
-            cd /opt/code/bestpay-crm-ws
+            cd pay10-crm-ws
             chmod +x gradlew
             ./gradlew clean build -x test
-            mv build/libs/*.war /opt/cicd-releases/
-
+            cp build/libs/*.war  /opt/warfile
+            cd ..
           elif [[ "$component" == "mobile" ]]; then
-            cd /opt/code/pay10-mobile
+            cd pay10-mobile
             chmod +x gradlew
             ./gradlew clean bootWar -x test
-            mv build/libs/*.war /opt/cicd-releases/
-
+            cp build/libs/*.war  /opt/warfile
+            cd ..
           elif [[ "$component" == "si" ]]; then
-            cd /opt/code/pay10-SI
+            cd pay10-SI
             chmod +x gradlew
             ./gradlew clean build -x test
-            mv build/libs/*.war /opt/cicd-releases/
-
+            cp build/libs/*.war  /opt/warfile
+            cd ..
           else
-            echo "Unknown component:$component"
+            echo "Unknown component: $component"
             exit 1
           fi
           echo "Build for $component completed"
@@ -187,29 +110,11 @@ phases:
 
   post_build:
     commands:
-      - |
-         if [ "$ROLLBACK" == "true" ]; then
-          echo "Rollback mode detected, skipping the post_build phase.";
-          exit 0;
-         fi
-         echo "Preparing and uploading WAR files to S3"
-         aws s3 cp /opt/cicd-releases/ s3://$S3_BUCKET/cicd-releases/${DATE_TIME}/ --region $AWS_REGION --recursive
-         aws s3 cp /opt/cicd-releases/ s3://$S3_BUCKET/autoscaling-war/ --region $AWS_REGION --recursive
-         echo "WAR files uploaded to S3 successfully"
-
-         echo "Preparing deployment artifact for CodeDeploy"
-         # download code-deploy files form s3 buckets.
-         aws s3 cp s3://$S3_BUCKET/codedeploy-files /opt/code/codedeploy-files --region $AWS_REGION --recursive 
-
-         # Create deployment directory for the artifact
-         mkdir -p /opt/deployment-artifact/
-
-         # Copy the WAR or component output and the appspec.yml and scripts to the artifact directory
-         cp -r /opt/cicd-releases/*.war /opt/code/codedeploy-files/appspec.yml /opt/code/codedeploy-files/scripts/* /opt/deployment-artifact/
-  
-         ls /opt/code/codedeploy-files/
-         cd /opt/deployment-artifact/
-         ls 
+      - echo "Checking for generated WAR files..."
+      - ls -l /opt/warfile/  # Verify the WAR files
+      - echo "Copying WAR files to S3..."
+      #- aws s3 cp /opt/warfile/*.war s3://pay10/war-file-store/cicd-releases/${DATE_TIME}/
+      - aws s3 cp /opt/warfile/ s3://pereprod.sahiltest/war-file-store/cicd-releases/${DATE_TIME}/ --recursive --exclude "*" --include "*.war" 
 
 
 artifacts:
