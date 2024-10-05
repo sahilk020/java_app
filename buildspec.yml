@@ -3,7 +3,7 @@ version: 0.2
 
 env:  
   variables:
-    GITLAB_REPO_URL: "https://github.com/sahilk020/artemis-main-bp-admin.git"
+    GITLAB_REPO_URL: "https://github.com/sahilk020/java_app.git"
     S3_BUCKET: "pereprod.sahiltest"                        # Your S3 bucket name
     AWS_REGION: "eu-central-1"     # Your AWS region
     DATE_TIME: "default_value"                    
