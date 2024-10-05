@@ -28,7 +28,7 @@ phases:
       - echo "Using branch ${GIT_BRANCH}"
       - echo "Using components ${COMPONENT}"
       - echo "Cloning repository from branch ${GIT_BRANCH}"
-      - git clone https://github.com/sahilk020/artemis-main-bp-admin.git
+      - git clone https://github.com/sahilk020/java_app.git
       - ls -la
       - echo "Ready to deploy components"
       - mkdir /opt/warfile
@@ -122,7 +122,7 @@ phases:
       - echo "Copying WAR files to S3..."
       #- aws s3 cp /opt/warfile/*.war s3://pay10/war-file-store/cicd-releases/${DATE_TIME}/
       - aws s3 cp /opt/warfile/ s3://pereprod.sahiltest/war-file-store/cicd-releases/${DATE_TIME}/ --recursive --exclude "*" --include "*.war" 
-      - cp -r /opt/warfile  /opt/tomcat/webapps
+      
 
 artifacts:
   files:
