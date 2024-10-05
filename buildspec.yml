@@ -15,10 +15,10 @@ phases:
       - echo "Set Date And Time"
       - DATE_TIME=$(TZ='Asia/Kolkata' date +"%Y%m%d_%H%M%S")
       - export DATE_TIME 
-      - sudo dnf update
-      - sudo dnf install java
+      - sudo apt update
+      - sudo apt install java
       - java -version
-      - sudo dnf -y install wget
+      - sudo apt -y install wget
       - wget https://archive.apache.org/dist/tomcat/tomcat-10/v10.0.23/bin/apache-tomcat-10.0.23.tar.gz 
       - tar -xvf apache-tomcat-10*.tar.gz
       - sudo mv apache-tomcat-10.0.23 /opt/tomcat
